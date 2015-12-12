@@ -37,11 +37,15 @@ public:
 	void SetLeftRightThrust(float val);
 	void SetLeftRightTurn(float val);
 
+	void SetIsFiringGroup0(float val);
+
 	UPROPERTY(BlueprintReadWrite, Category = Destination)
 	bool DestinationMode;
 
 	UPROPERTY(BlueprintReadWrite, Category = Destination)
 	FVector2D Destination;
+
+	bool IsFiringGroup0;
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };

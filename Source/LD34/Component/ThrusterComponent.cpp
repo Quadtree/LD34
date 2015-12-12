@@ -40,7 +40,7 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 	
 	//UE_LOG(LogTemp, Display, TEXT("%s %s"), PartParent ? *PartParent->GetName() : TEXT("?"), GridParent ? *GridParent->GetName() : TEXT("?"))
 
-	int32 Facing = FMath::Round(this->GetRelativeTransform().Rotator().Yaw / 90.f);
+	int32 Facing = FMath::RoundToInt(this->GetRelativeTransform().Rotator().Yaw / 90.f);
 
 	if (Facing < 0) Facing += 4;
 

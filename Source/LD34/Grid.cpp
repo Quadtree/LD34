@@ -107,6 +107,7 @@ void AGrid::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 	InputComponent->BindAxis("ForwardBackward", this, &AGrid::SetForwardBackwardThrust);
 	InputComponent->BindAxis("LeftRightStrafe", this, &AGrid::SetLeftRightThrust);
 	InputComponent->BindAxis("LeftRightTurn", this, &AGrid::SetLeftRightTurn);
+	InputComponent->BindAxis("FiringGroup0", this, &AGrid::SetIsFiringGroup0);
 }
 
 void AGrid::SetForwardBackwardThrust(float val)
@@ -122,6 +123,11 @@ void AGrid::SetLeftRightThrust(float val)
 void AGrid::SetLeftRightTurn(float val)
 {
 	this->LeftRightTurn = val;
+}
+
+void AGrid::SetIsFiringGroup0(float val)
+{
+	this->IsFiringGroup0 = val > 0.5f;
 }
 
 void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
