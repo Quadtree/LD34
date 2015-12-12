@@ -1,0 +1,7 @@
+.vs
+Binaries
+Intermediate
+Saved
+*.sdf
+*.opensdf
+*.sln
