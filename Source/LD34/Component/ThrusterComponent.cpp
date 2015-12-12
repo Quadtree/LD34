@@ -56,6 +56,9 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 	{
 		if (GridParent->ForwardBackwardThrust > 0.1f && Facing == 2) Power = GridParent->ForwardBackwardThrust;
 		if (GridParent->ForwardBackwardThrust < -0.1f && Facing == 0) Power = -GridParent->ForwardBackwardThrust;
+
+		if (GridParent->LeftRightThrust > 0.1f && Facing == 3) Power = GridParent->LeftRightThrust;
+		if (GridParent->LeftRightThrust < -0.1f && Facing == 1) Power = -GridParent->LeftRightThrust;
 	}
 
 	if (Power > 0.1f)
@@ -64,7 +67,7 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 
 		if (ForceTarget)
 		{
-			ForceTarget->AddImpulseAtLocation(this->GetComponentRotation().RotateVector(FVector(1000 * Power, 0, 0)), this->GetComponentLocation());
+			ForceTarget->AddImpulseAtLocation(this->GetComponentRotation().RotateVector(FVector(-100000 * DeltaTime * Power, 0, 0)), this->GetComponentLocation());
 		}
 	}
 }
