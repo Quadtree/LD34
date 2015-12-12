@@ -36,6 +36,12 @@ public:
 	void SetForwardBackwardThrust(float val);
 	void SetLeftRightThrust(float val);
 	void SetLeftRightTurn(float val);
+
+	UPROPERTY(BlueprintReadWrite, Category = Destination)
+	bool DestinationMode;
+
+	UPROPERTY(BlueprintReadWrite, Category = Destination)
+	FVector2D Destination;
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };
