@@ -29,7 +29,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Grid)
 	void CreateAndAddToGrid(TSubclassOf<class ABasePart> Part, int32 X, int32 Y);
 
+	float ForwardBackwardThrust;
+	float LeftRightThrust;
+	float LeftRightTurn;
 
+	void SetForwardBackwardThrust(float val);
+	void SetLeftRightThrust(float val);
+	void SetLeftRightTurn(float val);
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };

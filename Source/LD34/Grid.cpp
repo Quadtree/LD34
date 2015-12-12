@@ -33,6 +33,24 @@ void AGrid::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
 
+	InputComponent->BindAxis("ForwardBackward", this, &AGrid::SetForwardBackwardThrust);
+	InputComponent->BindAxis("LeftRightStrafe", this, &AGrid::SetLeftRightThrust);
+	InputComponent->BindAxis("LeftRightTurn", this, &AGrid::SetLeftRightTurn);
+}
+
+void AGrid::SetForwardBackwardThrust(float val)
+{
+	this->ForwardBackwardThrust = val;
+}
+
+void AGrid::SetLeftRightThrust(float val)
+{
+	this->LeftRightThrust = val;
+}
+
+void AGrid::SetLeftRightTurn(float val)
+{
+	this->LeftRightTurn = val;
 }
 
 void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
