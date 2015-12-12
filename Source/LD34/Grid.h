@@ -28,6 +28,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = Grid)
 	void CreateAndAddToGrid(TSubclassOf<class ABasePart> Part, int32 X, int32 Y);
+
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };

@@ -25,6 +25,7 @@ void AGrid::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	//UE_LOG(LogTemp, Display, TEXT("Pos %s"), *GetActorLocation().ToString());
 }
 
 // Called to bind functionality to input
@@ -36,12 +37,40 @@ void AGrid::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 
 void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 {
-	USceneComponent* root = Part->GetRootComponent();
+	if (Part)
+	{
+		USceneComponent* root = Part->GetRootComponent();
+		USceneComponent* myRoot = this->GetRootComponent();
+
+		if (root && myRoot)
+		{
+			root->SetRelativeLocation(FVector(X * 100, Y * 100, 0));
+			root->AttachTo(myRoot, NAME_None, EAttachLocation::KeepRelativeOffset, true);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No root component found in %s or %s"), *Part->GetName(), *this->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Part passed in was null"));
+	}
 }
 
 void AGrid::CreateAndAddToGrid(TSubclassOf<class ABasePart> Part, int32 X, int32 Y)
 {
 	ABasePart* NewPart = GetWorld()->SpawnActor<ABasePart>(Part);
+
+	if (NewPart)
+	{
+		UE_LOG(LogTemp, Display, TEXT("New part %s created"), *Part->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Unable to create new part"));
+	}
+	
 
 	AddToGrid(NewPart, X, Y);
 }
