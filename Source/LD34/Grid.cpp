@@ -64,6 +64,8 @@ void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 		{
 			root->SetRelativeLocation(FVector(X * 100, Y * 100, 0));
 			root->AttachTo(myRoot, NAME_None, EAttachLocation::KeepRelativeOffset, true);
+			Part->GridX = X;
+			Part->GridY = Y;
 		}
 		else
 		{

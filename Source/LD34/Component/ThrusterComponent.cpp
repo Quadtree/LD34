@@ -14,6 +14,8 @@ UThrusterComponent::UThrusterComponent()
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
 
+	ThrustPower = 100000;
+
 	// ...
 }
 
@@ -59,6 +61,34 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 
 		if (GridParent->LeftRightThrust > 0.1f && Facing == 3) Power = GridParent->LeftRightThrust;
 		if (GridParent->LeftRightThrust < -0.1f && Facing == 1) Power = -GridParent->LeftRightThrust;
+
+		// nose thrusters, left/right
+		if (PartParent->GridX > 0)
+		{
+			if (GridParent->LeftRightTurn > 0.1f && Facing == 3) Power = GridParent->LeftRightTurn;
+			if (GridParent->LeftRightTurn < -0.1f && Facing == 1) Power = -GridParent->LeftRightTurn;
+		}
+
+		// tail thrusters, left/right
+		if (PartParent->GridX < 0)
+		{
+			if (GridParent->LeftRightTurn > 0.1f && Facing == 1) Power = GridParent->LeftRightTurn;
+			if (GridParent->LeftRightTurn < -0.1f && Facing == 3) Power = -GridParent->LeftRightTurn;
+		}
+
+		// left thrusters, forward/backward
+		if (PartParent->GridY > 0)
+		{
+			if (GridParent->LeftRightTurn > 0.1f && Facing == 0) Power = GridParent->LeftRightTurn;
+			if (GridParent->LeftRightTurn < -0.1f && Facing == 2) Power = -GridParent->LeftRightTurn;
+		}
+
+		// right thrusters, forward/backward
+		if (PartParent->GridY < 0)
+		{
+			if (GridParent->LeftRightTurn > 0.1f && Facing == 2) Power = GridParent->LeftRightTurn;
+			if (GridParent->LeftRightTurn < -0.1f && Facing == 0) Power = -GridParent->LeftRightTurn;
+		}
 	}
 
 	if (Power > 0.1f)
@@ -67,8 +97,17 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 
 		if (ForceTarget)
 		{
-			ForceTarget->AddImpulseAtLocation(this->GetComponentRotation().RotateVector(FVector(-100000 * DeltaTime * Power, 0, 0)), this->GetComponentLocation());
+			ForceTarget->AddImpulseAtLocation(this->GetComponentRotation().RotateVector(FVector(-ThrustPower * DeltaTime * Power, 0, 0)), this->GetComponentLocation());
 		}
+	}
+
+	TArray<USceneComponent*> children;
+
+	this->GetChildrenComponents(false, children);
+
+	for (auto c : children)
+	{
+		c->SetVisibility(Power > 0.1f, true);
 	}
 }
 

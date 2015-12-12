@@ -25,4 +25,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = Health)
 	int32 Health;
 	
+	int32 GridX;
+	int32 GridY;
 };
