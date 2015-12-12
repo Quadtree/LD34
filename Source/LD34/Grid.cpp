@@ -36,9 +36,11 @@ void AGrid::Tick( float DeltaTime )
 
 	//float newAngle = FMath::FixedTurn(curAngle, angleToTarget, 1);
 
+	//FMath::FindDeltaAngle
+
 	if (DestinationMode)
 	{
-		float curAngle = FMath::DegreesToRadians(GetActorRotation().Yaw);
+		/*float curAngle = FMath::DegreesToRadians(GetActorRotation().Yaw);
 
 		FVector2D pointCenter(GetActorLocation().X, GetActorLocation().Y);
 
@@ -67,7 +69,20 @@ void AGrid::Tick( float DeltaTime )
 		if (rightDist < middleDist && rightDist < leftDist)
 		{
 			desiredAngularVelocity = 120;
-		}
+		}*/
+
+		float desiredAngularVelocity = 0;
+		float actualAngularVelocity = Cast<UPrimitiveComponent>(GetRootComponent())->GetPhysicsAngularVelocity().Z;
+
+		FVector2D delta = (Destination - FVector2D(GetActorLocation().X, GetActorLocation().Y));
+
+		float angleToTarget = FMath::Atan2(delta.Y, delta.X);
+
+		float curAngle = FMath::DegreesToRadians(GetActorRotation().Yaw);
+
+		float deltaAngle = FMath::FindDeltaAngle(curAngle, angleToTarget);
+
+		desiredAngularVelocity = deltaAngle * 70;
 
 		if (FMath::Abs(actualAngularVelocity - desiredAngularVelocity) > 5)
 		{
