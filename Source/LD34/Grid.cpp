@@ -42,29 +42,45 @@ void AGrid::Tick( float DeltaTime )
 
 		FVector2D pointCenter(GetActorLocation().X, GetActorLocation().Y);
 
-		FVector2D pointLeft = pointCenter + FVector2D(FMath::Cos(curAngle - 0.22f), FMath::Sin(curAngle - 0.22f))*200;
-		FVector2D pointMiddle = pointCenter + FVector2D(FMath::Cos(curAngle), FMath::Sin(curAngle)) * 200;
-		FVector2D pointRight = pointCenter + FVector2D(FMath::Cos(curAngle + 0.22f), FMath::Sin(curAngle + 0.22f)) * 200;
+		FVector2D pointLeft = pointCenter + FVector2D(FMath::Cos(curAngle - 0.22f), FMath::Sin(curAngle - 0.22f))*1;
+		FVector2D pointMiddle = pointCenter + FVector2D(FMath::Cos(curAngle), FMath::Sin(curAngle)) * 1;
+		FVector2D pointRight = pointCenter + FVector2D(FMath::Cos(curAngle + 0.22f), FMath::Sin(curAngle + 0.22f)) * 1;
 
-		UE_LOG(LogTemp, Display, TEXT("Pos %s"), *pointMiddle.ToString());
+		//UE_LOG(LogTemp, Display, TEXT("Pos %s"), *Cast<UPrimitiveComponent>(GetRootComponent())->GetPhysicsAngularVelocity().ToString());
 
-		DrawDebugSphere(GetWorld(), FVector(pointLeft.X, pointLeft.Y, 200), 50, 4, FColor::Red, false, 1);
-		DrawDebugSphere(GetWorld(), FVector(pointMiddle.X, pointMiddle.Y, 200), 50, 4, FColor::Green, false, 1);
-		DrawDebugSphere(GetWorld(), FVector(pointRight.X, pointRight.Y, 200), 50, 4, FColor::Blue, false, 1);
+		//DrawDebugSphere(GetWorld(), FVector(pointLeft.X, pointLeft.Y, 200), 50, 4, FColor::Red, false, 1);
+		//DrawDebugSphere(GetWorld(), FVector(pointMiddle.X, pointMiddle.Y, 200), 50, 4, FColor::Green, false, 1);
+		//DrawDebugSphere(GetWorld(), FVector(pointRight.X, pointRight.Y, 200), 50, 4, FColor::Blue, false, 1);
 
 		float leftDist = FVector2D::DistSquared(pointLeft, Destination);
 		float middleDist = FVector2D::DistSquared(pointMiddle, Destination);
 		float rightDist = FVector2D::DistSquared(pointRight, Destination);
 
+		float desiredAngularVelocity = 0;
+		float actualAngularVelocity = Cast<UPrimitiveComponent>(GetRootComponent())->GetPhysicsAngularVelocity().Z;
+
 		if (leftDist < middleDist && leftDist < rightDist)
 		{
-			LeftRightTurn = -1;
+			desiredAngularVelocity = -120;
 		}
 
 		if (rightDist < middleDist && rightDist < leftDist)
 		{
-			LeftRightTurn = 1;
+			desiredAngularVelocity = 120;
 		}
+
+		if (FMath::Abs(actualAngularVelocity - desiredAngularVelocity) > 5)
+		{
+			if (actualAngularVelocity > desiredAngularVelocity)
+			{
+				LeftRightTurn = -1;
+			}
+			else
+			{
+				LeftRightTurn = 1;
+			}
+		}
+		
 	}
 }
 
