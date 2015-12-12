@@ -29,6 +29,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Grid)
 	void CreateAndAddToGrid(TSubclassOf<class ABasePart> Part, int32 X, int32 Y);
 
+	void RemoveAt(int32 X, int32 Y);
+
 	float ForwardBackwardThrust;
 	float LeftRightThrust;
 	float LeftRightTurn;

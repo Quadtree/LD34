@@ -139,10 +139,20 @@ void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 
 		if (root && myRoot)
 		{
+			if (Cells.Contains(X) && Cells[X].Contains(Y) && Cells[X][Y])
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Grid %s already contains a part at %s, %s"), *GetName(), *FString::FromInt(X), *FString::FromInt(Y));
+			}
+
 			root->SetRelativeLocation(FVector(X * 100, Y * 100, 0));
 			root->AttachTo(myRoot, NAME_None, EAttachLocation::KeepRelativeOffset, true);
 			Part->GridX = X;
 			Part->GridY = Y;
+
+			if (!Cells.Contains(X)) Cells.Add(X);
+			if (!Cells[X].Contains(Y)) Cells[X].Add(Y);
+
+			Cells[X][Y] = Part;
 		}
 		else
 		{
@@ -170,4 +180,19 @@ void AGrid::CreateAndAddToGrid(TSubclassOf<class ABasePart> Part, int32 X, int32
 	
 
 	AddToGrid(NewPart, X, Y);
+}
+
+void AGrid::RemoveAt(int32 X, int32 Y)
+{
+	if (Cells.Contains(X) && Cells[X].Contains(Y) && Cells[X][Y] && Cells[X][Y]->IsValidLowLevel())
+	{
+		ABasePart* partApart = Cells[X][Y];
+		Cells[X][Y] = nullptr;
+
+		partApart->DetachFromGrid();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Remove attempt failed: Grid %s contains nothing at %s, %s"), *GetName(), *FString::FromInt(X), *FString::FromInt(Y));
+	}
 }

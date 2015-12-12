@@ -2,6 +2,7 @@
 
 #include "LD34.h"
 #include "BasePart.h"
+#include "Grid.h"
 
 
 // Sets default values
@@ -17,6 +18,7 @@ void ABasePart::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	MaxHealth = Health;
 }
 
 // Called every frame
@@ -26,3 +28,33 @@ void ABasePart::Tick( float DeltaTime )
 
 }
 
+float ABasePart::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	float ret = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	Health -= ret;
+
+	if (Health <= 0)
+	{
+		if (auto g = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor()))
+		{
+			g->RemoveAt(GridX, GridY);
+		}
+
+		Health = MaxHealth;
+	}
+
+	UE_LOG(LogTemp, Display, TEXT("%s took %s damage health is now %s"), *GetName(), *FString::SanitizeFloat(DamageAmount), *FString::SanitizeFloat(Health));
+
+	return ret;
+}
+
+void ABasePart::DetachFromGrid()
+{
+	AGrid* parentGrid = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor());
+
+	GetRootComponent()->DetachFromParent(true);
+
+	GridLockTime = 5;
+	LockedGrid = parentGrid->GetName();
+}

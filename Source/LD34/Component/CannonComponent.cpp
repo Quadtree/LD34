@@ -39,7 +39,11 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 	if (GridParent && (GridParent->IsFiringGroup0 && FireGroup == 0) && CooldownLeft <= 0)
 	{
-		auto a = GetOwner()->GetWorld()->SpawnActor<AProjectile>(ShotType, GetComponentLocation(), GetComponentRotation());
+		FActorSpawnParameters p;
+
+		p.Instigator = GridParent;
+
+		auto a = GetOwner()->GetWorld()->SpawnActor<AProjectile>(ShotType, GetComponentLocation(), GetComponentRotation(), p);
 
 		if (a)
 		{

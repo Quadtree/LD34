@@ -27,5 +27,20 @@ void AProjectile::Tick( float DeltaTime )
 	SetActorLocation(GetActorLocation() + Vel * DeltaTime);
 
 	//UE_LOG(LogTemp, Display, TEXT("POS %s"), *GetActorLocation().ToString());
+
+	TArray<FOverlapResult> res;
+
+	if (GetWorld()->OverlapMultiByChannel(res, FVector(GetActorLocation().X, GetActorLocation().Y, 0), FQuat::Identity, ECollisionChannel::ECC_WorldDynamic, FCollisionShape::MakeSphere(10)))
+	{
+		for (auto& rd : res)
+		{
+			if (rd.Actor.Get() && rd.Actor != this->GetInstigator() && rd.Actor->GetRootComponent() && rd.Actor->GetRootComponent()->GetAttachmentRootActor() != this->GetInstigator() && rd.Component.Get() && rd.Component->GetOwner())
+			{
+				UE_LOG(LogTemp, Display, TEXT("Hit %s"), *rd.Component->GetName());
+				rd.Component->GetOwner()->TakeDamage(DamageOnHit, FDamageEvent(), this->GetInstigatorController(), this);
+				this->Destroy();
+			}
+		}
+	}
 }
 

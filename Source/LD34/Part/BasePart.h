@@ -23,8 +23,18 @@ public:
 	// a typical bolt does 1000 health worth of damage
 	// if a part is reduced to zero health it goes flying, or if unattached, is destroyed
 	UPROPERTY(EditAnywhere, Category = Health)
-	int32 Health;
+	float Health;
+
+	float MaxHealth;
 	
 	int32 GridX;
 	int32 GridY;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	FString LockedGrid;
+
+	float GridLockTime;
+
+	void DetachFromGrid();
 };

@@ -24,5 +24,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Projectile)
 	float Lifespan;
+
+	UPROPERTY(EditAnywhere, Category = Projectile)
+	float DamageOnHit;
 	
 };
