@@ -55,6 +55,9 @@ public:
 	TArray<class ABasePart*> GetAllContiguous(class ABasePart* start);
 	class ABasePart* GetPartAt(int32 X, int32 Y);
 
+	UPROPERTY(EditAnywhere, Category = Split)
+	TSubclassOf<AGrid> BaseGridType;
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };

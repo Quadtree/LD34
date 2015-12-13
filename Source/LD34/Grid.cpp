@@ -168,6 +168,7 @@ void AGrid::ContinuityCheck()
 {
 	TArray<TArray<ABasePart*>> distinctGrids;
 
+	TSet<ABasePart*> covered;
 	TSet<ABasePart*> notCovered;
 
 	for (auto i : Cells)
@@ -181,27 +182,40 @@ void AGrid::ContinuityCheck()
 		}
 	}
 
-	for (auto i : Cells)
+	for (auto v : notCovered)
 	{
-		for (auto j : i.Value)
+		if (covered.Contains(v)) continue;
+
+		TArray<ABasePart*> attached = GetAllContiguous(v);
+
+		covered.Append(attached);
+
+		if (attached.Num() == 1)
 		{
-			if (j.Value && j.Value->IsValidLowLevel())
+			// there is only one component in this, so just send it flipping
+			ABasePart* r = this->GetPartAt(v->GridX, v->GridY);
+			this->RemoveAt(v->GridX, v->GridY);
+			r->GoFlipping();
+		}
+		else
+		{
+			distinctGrids.Add(attached);
+		}
+	}
+
+	// for any grids ABOVE 0 we need to create new grids
+	for (int32 i = 1; i < distinctGrids.Num(); ++i)
+	{
+		AGrid* newGrid = GetWorld()->SpawnActor<AGrid>(BaseGridType, GetActorLocation(), GetActorRotation());
+
+		if (newGrid)
+		{
+			UE_LOG(LogTemp, Display, TEXT("Split! New grid has %s parts, grid 0 has %s parts"), *FString::FromInt(distinctGrids[i].Num()), *FString::FromInt(distinctGrids[0].Num()));
+
+			for (auto a : distinctGrids[i])
 			{
-				TArray<ABasePart*> attached = GetAllContiguous(j.Value);
-
-				covered.Append(attached);
-
-				if (attached.Num() == 1)
-				{
-					// there is only one component in this, so just send it flipping
-					ABasePart* r = this->GetPartAt(j.Value->GridX, j.Value->GridY);
-					this->RemoveAt(j.Value->GridX, j.Value->GridY);
-					r->GoFlipping();
-				}
-				else
-				{
-					distinctGrids.Add(attached);
-				}
+				this->RemoveAt(a->GridX, a->GridY);
+				newGrid->AddToGrid(a, a->GridX, a->GridY);
 			}
 		}
 	}
@@ -258,6 +272,15 @@ void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 			root->AttachTo(myRoot, NAME_None, EAttachLocation::KeepRelativeOffset, true);
 			Part->GridX = X;
 			Part->GridY = Y;
+
+			auto p = Cast<UPrimitiveComponent>(myRoot);
+
+			if (p)
+			{
+				p->GetBodyInstance()->UpdateMassProperties();
+
+				UE_LOG(LogTemp, Display, TEXT("%s mass is now %s"), *p->GetName(), *FString::SanitizeFloat(p->GetMass()));
+			}
 
 			if (!Cells.Contains(X)) Cells.Add(X);
 			if (!Cells[X].Contains(Y)) Cells[X].Add(Y);

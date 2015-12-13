@@ -40,7 +40,9 @@ float ABasePart::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 		{
 			g->RemoveAt(GridX, GridY);
 
-			
+			GoFlipping();
+
+			g->ContinuityCheck();
 		}
 
 		Health = MaxHealth;
