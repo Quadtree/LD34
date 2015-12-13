@@ -29,7 +29,7 @@ void ARobotGridGenerator::BeginPlay()
 		}
 	}
 
-	int32 targetArmorBlocks = FMath::RandRange(Value / 4, Value);
+	int32 targetArmorBlocks = FMath::RandRange(Value / 2, Value * 2);
 
 	SetCell(0, 10, Part[0]);
 
@@ -76,6 +76,64 @@ void ARobotGridGenerator::BeginPlay()
 		}
 	}
 
+	int32 itr = 0;
+
+	while (FMath::Abs(CalcActualValue() - Value) > 2)
+	{
+		if (++itr > 10000)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Iteration limit reached"));
+			break;
+		}
+
+		float actVal = CalcActualValue();
+
+		UE_LOG(LogTemp, Display, TEXT("%s vs %s"), *FString::SanitizeFloat(actVal), *FString::SanitizeFloat(Value));
+
+		if (actVal > Value)
+		{
+			FIntPoint pt = GetCellNotOfType(Part[0]);
+
+			SetCell(pt.X, pt.Y, Part[0]);
+		}
+		else
+		{
+			int32 pInd = FMath::RandRange(1, Part.Num() - 1);
+
+			FIntPoint pt;
+
+			for (int32 i = 0; i < 20; ++i)
+			{
+				pt = GetCellOfType(Part[0]);
+
+				if (PartMountType[pInd] == 0)
+				{
+					break;
+				}
+				else if (PartMountType[pInd] == 1)
+				{
+					// front mount
+					if (!GetCell(pt.X, pt.X + 1))
+					{
+						break;
+					}
+				}
+				else if (PartMountType[pInd] == -1)
+				{
+					// rear mount
+					if (!GetCell(pt.X, pt.X - 1))
+					{
+						break;
+					}
+				}
+			}
+
+			UE_LOG(LogTemp, Display, TEXT("Placing %s at %s"), *FString::FromInt(pInd), *pt.ToString());
+
+			SetCell(pt.X, pt.Y, Part[pInd]);
+		}
+	}
+
 	AGrid* g = GetWorld()->SpawnActor<AGrid>(GridType, GetActorLocation(), GetActorRotation());
 
 	if (g)
@@ -102,6 +160,36 @@ void ARobotGridGenerator::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+}
+
+float ARobotGridGenerator::CalcActualValue()
+{
+	float ret = 0;
+
+	for (int32 x = 0; x < 20; ++x)
+	{
+		for (int32 y = 0; y < 20; ++y)
+		{
+			int32 typeIndex = -1;
+			auto inCell = GetCell(x, y);
+
+			for (int32 i = 0; i < Part.Num(); ++i)
+			{
+				if (Part[i] == inCell)
+				{
+					typeIndex = i;
+					break;
+				}
+			}
+
+			if (typeIndex != -1)
+			{
+				ret += PartCost[typeIndex] * (x == 0 ? 1 : 2);
+			}
+		}
+	}
+
+	return ret;
 }
 
 bool ARobotGridGenerator::SetCell(int32 x, int32 y, TSubclassOf<class ABasePart> val)

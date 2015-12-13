@@ -29,7 +29,12 @@ public:
 	TArray<TSubclassOf<class ABasePart>> Part;
 
 	UPROPERTY(EditAnywhere, Category = Generation)
+	TArray<int32> PartMountType;
+
+	UPROPERTY(EditAnywhere, Category = Generation)
 	TSubclassOf<class AGrid> GridType;
+
+	float CalcActualValue();
 
 	UPROPERTY(EditAnywhere, Category = Generation)
 	float Value;
