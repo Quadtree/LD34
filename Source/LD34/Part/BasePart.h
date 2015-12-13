@@ -40,4 +40,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = PartType)
 	bool IsCommandCenter;
+
+	void GoFlipping();
 };

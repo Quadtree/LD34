@@ -164,6 +164,82 @@ float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AC
 	return ret;
 }
 
+void AGrid::ContinuityCheck()
+{
+	TArray<TArray<ABasePart*>> distinctGrids;
+
+	TSet<ABasePart*> notCovered;
+
+	for (auto i : Cells)
+	{
+		for (auto j : i.Value)
+		{
+			if (j.Value && j.Value->IsValidLowLevel())
+			{
+				notCovered.Add(j.Value);
+			}
+		}
+	}
+
+	for (auto i : Cells)
+	{
+		for (auto j : i.Value)
+		{
+			if (j.Value && j.Value->IsValidLowLevel())
+			{
+				TArray<ABasePart*> attached = GetAllContiguous(j.Value);
+
+				covered.Append(attached);
+
+				if (attached.Num() == 1)
+				{
+					// there is only one component in this, so just send it flipping
+					ABasePart* r = this->GetPartAt(j.Value->GridX, j.Value->GridY);
+					this->RemoveAt(j.Value->GridX, j.Value->GridY);
+					r->GoFlipping();
+				}
+				else
+				{
+					distinctGrids.Add(attached);
+				}
+			}
+		}
+	}
+}
+
+TArray<ABasePart*> AGrid::GetAllContiguous(ABasePart* start)
+{
+	TSet<ABasePart*> closed;
+	TSet<ABasePart*> open;
+
+	open.Add(start);
+
+	while (open.Num() > 0)
+	{
+		// get some node. order does not matter for this algorithm
+		ABasePart* node = *open.CreateIterator();
+
+		if (auto n = GetPartAt(node->GridX + 1, node->GridY)) if (!open.Contains(n) && !closed.Contains(n)) open.Add(n);
+		if (auto n = GetPartAt(node->GridX - 1, node->GridY)) if (!open.Contains(n) && !closed.Contains(n)) open.Add(n);
+		if (auto n = GetPartAt(node->GridX, node->GridY + 1)) if (!open.Contains(n) && !closed.Contains(n)) open.Add(n);
+		if (auto n = GetPartAt(node->GridX, node->GridY - 1)) if (!open.Contains(n) && !closed.Contains(n)) open.Add(n);
+
+		open.Remove(node);
+		closed.Add(node);
+	}
+	
+
+	return closed.Array();
+}
+
+ABasePart* AGrid::GetPartAt(int32 X, int32 Y)
+{
+	if (Cells.Contains(X) && Cells[X].Contains(Y) && Cells[X][Y] && Cells[X][Y]->IsValidLowLevel())
+		return Cells[X][Y];
+	else
+		return nullptr;
+}
+
 void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 {
 	if (Part)

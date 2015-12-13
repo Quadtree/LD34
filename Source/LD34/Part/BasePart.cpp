@@ -39,6 +39,8 @@ float ABasePart::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 		if (auto g = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor()))
 		{
 			g->RemoveAt(GridX, GridY);
+
+			
 		}
 
 		Health = MaxHealth;
@@ -57,7 +59,10 @@ void ABasePart::DetachFromGrid()
 
 	GridLockTime = 5;
 	LockedGrid = parentGrid->GetName();
+}
 
+void ABasePart::GoFlipping()
+{
 	auto p = Cast<UPrimitiveComponent>(GetRootComponent());
 
 	if (p)

@@ -50,6 +50,11 @@ public:
 	bool IsFiringGroup0;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	void ContinuityCheck();
+	TArray<class ABasePart*> GetAllContiguous(class ABasePart* start);
+	class ABasePart* GetPartAt(int32 X, int32 Y);
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };
