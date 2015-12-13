@@ -18,7 +18,7 @@ void ASpacePlayerController::Tick(float DeltaSeconds)
 
 	auto g = Cast<AGrid>(GetPawn());
 
-	if (g) { UE_LOG(LogTemp, Display, TEXT("TICK! %s"), *FString::FromInt(g->CommandCenters)); }
+	//if (g) { UE_LOG(LogTemp, Display, TEXT("TICK! %s"), *FString::FromInt(g->CommandCenters)); }
 
 	if (!g || !g->CommandCenters)
 	{

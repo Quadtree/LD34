@@ -41,6 +41,9 @@ public:
 
 	void SetIsFiringGroup0(float val);
 
+	void ZoomIn();
+	void ZoomOut();
+
 	UPROPERTY(BlueprintReadWrite, Category = Destination)
 	bool DestinationMode;
 
@@ -74,6 +77,22 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = Power)
 	float GetPowerPct();
+
+	UPROPERTY(EditAnywhere, Category = Zoom)
+	float MaxCameraHeight;
+
+	UPROPERTY(EditAnywhere, Category = Zoom)
+	float MinCameraHeight;
+
+	UPROPERTY(EditAnywhere, Category = Zoom)
+	float CameraDefaultHeight;
+
+	float CameraHeight;
+
+	float CameraDesiredHeight;
+
+	UPROPERTY(EditAnywhere, Category = Zoom)
+	float CameraMovespeed;
 
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;

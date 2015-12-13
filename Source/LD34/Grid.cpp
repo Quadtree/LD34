@@ -29,6 +29,9 @@ void AGrid::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s No real root component"), *GetName());
 	}
+
+	CameraHeight = CameraDefaultHeight;
+	CameraDesiredHeight = CameraDefaultHeight;
 }
 
 // Called every frame
@@ -81,6 +84,15 @@ void AGrid::Tick( float DeltaTime )
 			a->SetPhysicsLinearVelocity(a->GetPhysicsLinearVelocity().GetSafeNormal() * MAX_SPEED);
 		}
 	}
+
+	if (auto cam = FindComponentByClass<UCameraComponent>())
+	{
+		const float CAMERA_INTERPOLATE_SPEED = 0.05f;
+
+		cam->SetRelativeLocation(FVector(0, 0, CameraHeight));
+
+		CameraHeight = CameraHeight * (1 - CAMERA_INTERPOLATE_SPEED) + CameraDesiredHeight * CAMERA_INTERPOLATE_SPEED;
+	}
 }
 
 // Called to bind functionality to input
@@ -92,6 +104,23 @@ void AGrid::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 	InputComponent->BindAxis("LeftRightStrafe", this, &AGrid::SetLeftRightThrust);
 	InputComponent->BindAxis("LeftRightTurn", this, &AGrid::SetLeftRightTurn);
 	InputComponent->BindAxis("FiringGroup0", this, &AGrid::SetIsFiringGroup0);
+
+	InputComponent->BindAction("ZoomIn", EInputEvent::IE_Pressed, this, &AGrid::ZoomIn);
+	InputComponent->BindAction("ZoomOut", EInputEvent::IE_Pressed, this, &AGrid::ZoomOut);
+}
+
+void AGrid::ZoomIn()
+{
+	UE_LOG(LogTemp, Display, TEXT("Zoom in"));
+
+	CameraDesiredHeight = FMath::Clamp(CameraDesiredHeight - CameraMovespeed, MinCameraHeight, MaxCameraHeight);
+}
+
+void AGrid::ZoomOut()
+{
+	UE_LOG(LogTemp, Display, TEXT("Zoom out"));
+
+	CameraDesiredHeight = FMath::Clamp(CameraDesiredHeight + CameraMovespeed, MinCameraHeight, MaxCameraHeight);
 }
 
 void AGrid::SetForwardBackwardThrust(float val)

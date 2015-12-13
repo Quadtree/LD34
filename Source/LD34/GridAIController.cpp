@@ -57,7 +57,7 @@ void AGridAIController::Tick(float DeltaSeconds)
 
 			//DrawDebugSphere(GetWorld(), trg, 200, 2, FColor::Red, false, 1);
 
-			UE_LOG(LogTemp, Display, TEXT("TARGET %s"), *FVector2D(trg).ToString());
+			//UE_LOG(LogTemp, Display, TEXT("TARGET %s"), *FVector2D(trg).ToString());
 
 			p->Destination = FVector2D(trg);
 			p->DestinationMode = true;
