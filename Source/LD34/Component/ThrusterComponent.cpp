@@ -72,7 +72,7 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 			UE_LOG(LogTemp, Warning, TEXT("Parent doesn't have a valid root component"));
 		}
 
-		DrawDebugString(GetWorld(), PartParent->GetActorLocation(), *relativeLoc.ToString(), nullptr, FColor::Green, DeltaTime);
+		//DrawDebugString(GetWorld(), PartParent->GetActorLocation(), *relativeLoc.ToString(), nullptr, FColor::Green, DeltaTime);
 
 		if (GridParent->ForwardBackwardThrust > 0.1f && Facing == 2) Power = GridParent->ForwardBackwardThrust;
 		if (GridParent->ForwardBackwardThrust < -0.1f && Facing == 0) Power = -GridParent->ForwardBackwardThrust;

@@ -11,7 +11,7 @@ ABasePart::ABasePart()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	OddsOfSurvival = .3333f;
+	OddsOfSurvival = .75f;
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +26,8 @@ void ABasePart::BeginPlay()
 	if (a)
 	{
 		a->OnComponentHit.AddUniqueDynamic(this, &ABasePart::OnHitHandler);
+		a->SetLinearDamping(0.5f);
+		a->SetAngularDamping(2);
 	}
 	else
 	{
@@ -39,6 +41,22 @@ void ABasePart::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	GridLockTime -= DeltaTime;
+
+	AGrid* parentGrid = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor());
+
+	if (parentGrid)
+	{
+		LooseTime = 0;
+	}
+	else
+	{
+		LooseTime += DeltaTime;
+
+		if (LooseTime > 120)
+		{
+			Destroy();
+		}
+	}
 }
 
 float ABasePart::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
@@ -86,8 +104,8 @@ void ABasePart::GoFlipping()
 
 		if (p)
 		{
-			const float FLIP_LINEAR_FORCE = 10;
-			const float FLIP_ANGULAR_FORCE = 3;
+			const float FLIP_LINEAR_FORCE = 600;
+			const float FLIP_ANGULAR_FORCE = 20;
 
 			p->AddImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_LINEAR_FORCE, -FLIP_LINEAR_FORCE, 0), FVector(FLIP_LINEAR_FORCE, FLIP_LINEAR_FORCE, 0))), NAME_None, true);
 			p->AddAngularImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE), FVector(FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE))), NAME_None, true);

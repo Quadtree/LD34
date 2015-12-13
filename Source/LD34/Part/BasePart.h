@@ -57,4 +57,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Sound)
 	USoundBase* ExplosionSound;
+
+	float LooseTime;
 };

@@ -24,6 +24,8 @@ void AGrid::BeginPlay()
 	if (a)
 	{
 		a->OnComponentHit.AddUniqueDynamic(this, &AGrid::OnHitHandler);
+		a->SetLinearDamping(0.2f);
+		a->SetAngularDamping(0.2f);
 	}
 	else
 	{
@@ -366,6 +368,8 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 
 void AGrid::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
+	if (!CommandCenters) return;
+
 	if (auto bp = Cast<ABasePart>(OtherActor))
 	{
 		// make sure this component is unattached...
@@ -376,11 +380,46 @@ void AGrid::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, F
 			int32 gridX = FMath::RoundToInt(localSpace.X / 100);
 			int32 gridY = FMath::RoundToInt(localSpace.Y / 100);
 
-			AddToGrid(bp, gridX, gridY);
+			TArray<FIntPoint> possiblePoints;
+			possiblePoints.Add(FIntPoint(gridX, gridY));
+			
+			TArray<FIntPoint> edgePoints;
 
-			if (AddPartSound) UGameplayStatics::PlaySoundAtLocation(this, AddPartSound, GetActorLocation());
+			for (int32 x = -1; x <= 1; ++x) for (int32 y = -1; y <= 1; ++y) edgePoints.Add(possiblePoints[0] + FIntPoint(x, y));
 
-			ContinuityCheck();
+			while (edgePoints.Num() > 0)
+			{
+				int32 n = FMath::Rand() % edgePoints.Num();
+
+				possiblePoints.Add(edgePoints[n]);
+				edgePoints.RemoveAt(n);
+			}
+
+			bool anyToConnectTo = false;
+
+			for (auto a : possiblePoints)
+			{
+				gridX = a.X;
+				gridY = a.Y;
+
+				if (GetPartAt(gridX, gridY)) continue;
+
+				if (GetPartAt(gridX + 1, gridY)) anyToConnectTo = true;
+				if (GetPartAt(gridX - 1, gridY)) anyToConnectTo = true;
+				if (GetPartAt(gridX, gridY + 1)) anyToConnectTo = true;
+				if (GetPartAt(gridX, gridY - 1)) anyToConnectTo = true;
+
+				if (anyToConnectTo) break;
+			}
+
+			if (anyToConnectTo)
+			{
+				AddToGrid(bp, gridX, gridY);
+
+				if (AddPartSound) UGameplayStatics::PlaySoundAtLocation(this, AddPartSound, GetActorLocation());
+
+				ContinuityCheck();
+			}
 		}
 	}
 }

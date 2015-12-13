@@ -32,22 +32,28 @@ void AProjectile::Tick( float DeltaTime )
 
 	TArray<FOverlapResult> res;
 
-	if (GetWorld()->OverlapMultiByChannel(res, FVector(GetActorLocation().X, GetActorLocation().Y, 0), FQuat::Identity, ECollisionChannel::ECC_WorldDynamic, FCollisionShape::MakeSphere(10)))
+	if (GetWorld()->OverlapMultiByChannel(res, FVector(GetActorLocation().X, GetActorLocation().Y, 0), FQuat::Identity, ECollisionChannel::ECC_WorldDynamic, FCollisionShape::MakeSphere(40)))
 	{
 		for (auto& rd : res)
 		{
 			if (rd.Actor.Get() && rd.Actor != this->GetInstigator() && rd.Actor->GetRootComponent() && rd.Actor->GetRootComponent()->GetAttachmentRootActor() != this->GetInstigator() && Cast<AGrid>(rd.Actor->GetRootComponent()->GetAttachmentRootActor()) && rd.Component.Get() && rd.Component->GetOwner())
 			{
-				FPointDamageEvent pt;
-				pt.Damage = DamageOnHit;
-				pt.HitInfo.ImpactPoint = GetActorLocation();
+				for (float dist = 0; dist < 120; dist += 5)
+				{
+					FPointDamageEvent pt;
+					pt.Damage = DamageOnHit;
+					pt.HitInfo.ImpactPoint = GetActorLocation() + FMath::RandPointInBox(FBox(FVector(-dist, -dist, 0), FVector(dist, dist, 0)));
 
-				//UE_LOG(LogTemp, Display, TEXT("Hit %s damage to %s %s"), *rd.Component->GetName(), *rd.Component->GetOwner()->GetName(), *FString::FromInt(pt.ClassID));
+					//UE_LOG(LogTemp, Display, TEXT("Hit %s damage to %s %s"), *rd.Component->GetName(), *rd.Component->GetOwner()->GetName(), *FString::FromInt(pt.ClassID));
 
-				float dmg = rd.Component->GetOwner()->TakeDamage(DamageOnHit, pt, this->GetInstigatorController(), this);
+					float dmg = rd.Component->GetOwner()->TakeDamage(DamageOnHit, pt, this->GetInstigatorController(), this);
 
-				if (dmg > 0.1f)
-					this->Destroy();
+					if (dmg > 0.1f)
+					{
+						this->Destroy();
+						return;
+					}
+				}
 			}
 		}
 	}
