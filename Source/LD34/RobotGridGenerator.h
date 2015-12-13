@@ -55,4 +55,7 @@ private:
 	int32 power = 0;
 
 	bool SpawnDone;
+protected:
+	virtual void DoGenerate();
+	virtual void CreateFinalGrid(bool symmetry);
 };

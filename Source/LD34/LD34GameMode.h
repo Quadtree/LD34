@@ -36,4 +36,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Generation)
 	TSubclassOf<class ARobotGridGenerator> GeneratorType;
+
+	UPROPERTY(EditAnywhere, Category = Generation)
+	TSubclassOf<class ARobotGridGenerator> AsteroidGeneratorType;
+
+	FVector FindClearPoint();
 };

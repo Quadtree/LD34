@@ -39,6 +39,105 @@ void ARobotGridGenerator::Tick( float DeltaTime )
 		}
 	}
 
+	DoGenerate();
+}
+
+float ARobotGridGenerator::CalcActualValue(bool validate)
+{
+	float ret = 0;
+
+	commandCenters = 0;
+	engines = 0;
+	weapons = 0;
+	power = 0;
+
+	for (int32 x = 0; x < 20; ++x)
+	{
+		for (int32 y = 0; y < 20; ++y)
+		{
+			int32 typeIndex = -1;
+			auto inCell = GetCell(x, y);
+
+			for (int32 i = 0; i < Part.Num(); ++i)
+			{
+				if (Part[i] == inCell)
+				{
+					typeIndex = i;
+					break;
+				}
+			}
+
+			if (typeIndex == 1) commandCenters += (y == 0 ? 1 : 2);
+			if (typeIndex == 4 || typeIndex == 5) engines += (y == 0 ? 1 : 2);
+			if (typeIndex == 2 || typeIndex == 6 || typeIndex == 7) weapons += (y == 0 ? 1 : 2);
+			if (typeIndex == 3) power += (y == 0 ? 1 : 2);
+
+			if (typeIndex != -1)
+			{
+				ret += PartCost[typeIndex] * (y == 0 ? 1 : 2);
+			}
+		}
+	}
+
+	if (validate && (!commandCenters || (engines < Value / 3) || !weapons || !power)) return 0;
+
+	return ret;
+}
+
+bool ARobotGridGenerator::SetCell(int32 x, int32 y, TSubclassOf<class ABasePart> val)
+{
+	if (x < 0 || y < 0 || x >= 20 || y >= 20) return false;
+
+	if (HalfGrid[x][y] == val) return false;
+
+	HalfGrid[x][y] = val;
+
+	return true;
+}
+
+TSubclassOf<class ABasePart> ARobotGridGenerator::GetCell(int32 x, int32 y)
+{
+	if (x < 0 || y < 0 || x >= 20 || y >= 20) return TSubclassOf<class ABasePart>();
+
+	return HalfGrid[x][y];
+}
+
+FIntPoint ARobotGridGenerator::GetCellOfType(TSubclassOf<class ABasePart> type)
+{
+	int32 n = 0;
+
+	FIntPoint ret(-1,-1);
+
+	for (int32 i = 0; i < 20; ++i)
+	{
+		for (int32 j = 0; j < 20; ++j)
+		{
+			if (HalfGrid[i][j] == type && FMath::Rand() % ++n == 0) ret = FIntPoint(i, j);
+		}
+	}
+
+	return ret;
+}
+
+FIntPoint ARobotGridGenerator::GetCellNotOfType(TSubclassOf<class ABasePart> type)
+{
+	int32 n = 0;
+
+	FIntPoint ret(-1, -1);
+
+	for (int32 i = 0; i < 20; ++i)
+	{
+		for (int32 j = 0; j < 20; ++j)
+		{
+			if (HalfGrid[i][j] && HalfGrid[i][j] != type && FMath::Rand() % ++n == 0) ret = FIntPoint(i, j);
+		}
+	}
+
+	return ret;
+}
+
+void ARobotGridGenerator::DoGenerate()
+{
 	int32 targetArmorBlocks = FMath::FloorToInt(FMath::FRandRange(Value * 0.666f, Value * 1.f));
 
 	SetCell(10, 0, Part[0]);
@@ -156,6 +255,11 @@ void ARobotGridGenerator::Tick( float DeltaTime )
 		//}
 	}
 
+	CreateFinalGrid(true);
+}
+
+void ARobotGridGenerator::CreateFinalGrid(bool symmetry)
+{
 	AGrid* g = GetWorld()->SpawnActor<AGrid>(GridType, GetActorLocation(), GetActorRotation());
 
 	if (g)
@@ -168,7 +272,7 @@ void ARobotGridGenerator::Tick( float DeltaTime )
 				{
 					g->CreateAndAddToGrid(HalfGrid[x][y], x - 10, y);
 
-					if (y != 0) g->CreateAndAddToGrid(HalfGrid[x][y], x - 10, -y);
+					if (y != 0 && symmetry) g->CreateAndAddToGrid(HalfGrid[x][y], x - 10, -y);
 				}
 			}
 		}
@@ -180,100 +284,5 @@ void ARobotGridGenerator::Tick( float DeltaTime )
 
 		SpawnDone = true;
 	}
-
-}
-
-float ARobotGridGenerator::CalcActualValue(bool validate)
-{
-	float ret = 0;
-
-	commandCenters = 0;
-	engines = 0;
-	weapons = 0;
-	power = 0;
-
-	for (int32 x = 0; x < 20; ++x)
-	{
-		for (int32 y = 0; y < 20; ++y)
-		{
-			int32 typeIndex = -1;
-			auto inCell = GetCell(x, y);
-
-			for (int32 i = 0; i < Part.Num(); ++i)
-			{
-				if (Part[i] == inCell)
-				{
-					typeIndex = i;
-					break;
-				}
-			}
-
-			if (typeIndex == 1) commandCenters += (y == 0 ? 1 : 2);
-			if (typeIndex == 4 || typeIndex == 5) engines += (y == 0 ? 1 : 2);
-			if (typeIndex == 2 || typeIndex == 6 || typeIndex == 7) weapons += (y == 0 ? 1 : 2);
-			if (typeIndex == 3) power += (y == 0 ? 1 : 2);
-
-			if (typeIndex != -1)
-			{
-				ret += PartCost[typeIndex] * (y == 0 ? 1 : 2);
-			}
-		}
-	}
-
-	if (validate && (!commandCenters || (engines < Value / 3) || !weapons || !power)) return 0;
-
-	return ret;
-}
-
-bool ARobotGridGenerator::SetCell(int32 x, int32 y, TSubclassOf<class ABasePart> val)
-{
-	if (x < 0 || y < 0 || x >= 20 || y >= 20) return false;
-
-	if (HalfGrid[x][y] == val) return false;
-
-	HalfGrid[x][y] = val;
-
-	return true;
-}
-
-TSubclassOf<class ABasePart> ARobotGridGenerator::GetCell(int32 x, int32 y)
-{
-	if (x < 0 || y < 0 || x >= 20 || y >= 20) return TSubclassOf<class ABasePart>();
-
-	return HalfGrid[x][y];
-}
-
-FIntPoint ARobotGridGenerator::GetCellOfType(TSubclassOf<class ABasePart> type)
-{
-	int32 n = 0;
-
-	FIntPoint ret(-1,-1);
-
-	for (int32 i = 0; i < 20; ++i)
-	{
-		for (int32 j = 0; j < 20; ++j)
-		{
-			if (HalfGrid[i][j] == type && FMath::Rand() % ++n == 0) ret = FIntPoint(i, j);
-		}
-	}
-
-	return ret;
-}
-
-FIntPoint ARobotGridGenerator::GetCellNotOfType(TSubclassOf<class ABasePart> type)
-{
-	int32 n = 0;
-
-	FIntPoint ret(-1, -1);
-
-	for (int32 i = 0; i < 20; ++i)
-	{
-		for (int32 j = 0; j < 20; ++j)
-		{
-			if (HalfGrid[i][j] && HalfGrid[i][j] != type && FMath::Rand() % ++n == 0) ret = FIntPoint(i, j);
-		}
-	}
-
-	return ret;
 }
 

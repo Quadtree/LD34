@@ -3,6 +3,9 @@
 #include "LD34.h"
 #include "LD34GameMode.h"
 #include "RobotGridGenerator.h"
+#include "Grid.h"
+#include "Part/BasePart.h"
+#include "AsteroidGridGenerator.h"
 
 ALD34GameMode::ALD34GameMode()
 {
@@ -28,6 +31,11 @@ void ALD34GameMode::BeginPlay()
 
 	WaveTimeCharge = 30;
 	WavePower = WaveChargeRate * 15;
+
+	for (int32 i = 0; i < 20; ++i)
+	{
+		GetWorld()->SpawnActor<ARobotGridGenerator>(AsteroidGeneratorType, FindClearPoint(), FRotator(0, FMath::FRandRange(0, 360), 0));
+	}
 }
 
 void ALD34GameMode::Tick(float DeltaSeconds)
@@ -46,7 +54,7 @@ void ALD34GameMode::Tick(float DeltaSeconds)
 		{
 			float nextValue = FMath::FRandRange(FMath::Max(WavePower / 2, 25.f), WavePower);
 
-			auto a = GetWorld()->SpawnActor<ARobotGridGenerator>(GeneratorType, FMath::RandPointInBox(FBox(FVector(-20000, -20000, 0), FVector(20000, 20000, 0))), FRotator::ZeroRotator);
+			auto a = GetWorld()->SpawnActor<ARobotGridGenerator>(GeneratorType, FindClearPoint(), FRotator::ZeroRotator);
 
 			if (a)
 			{
@@ -59,6 +67,39 @@ void ALD34GameMode::Tick(float DeltaSeconds)
 
 		WaveTimeCharge = 0;
 	}
+}
+
+FVector ALD34GameMode::FindClearPoint()
+{
+	FVector ret;
+
+	for (int32 i = 0; i < 10000; ++i)
+	{
+		ret = FMath::RandPointInBox(FBox(FVector(-20000, -20000, 0), FVector(20000, 20000, 0)));
+
+		TArray<FOverlapResult> res;
+
+		bool hitAGrid = false;
+
+		if (GetWorld()->OverlapMultiByChannel(res, ret, FQuat::Identity, ECollisionChannel::ECC_WorldDynamic, FCollisionShape::MakeSphere(1000)))
+		{
+			for (auto a : res)
+			{
+				if (a.Actor.Get() && (Cast<AGrid>(a.Actor.Get()) || Cast<ABasePart>(a.Actor.Get())))
+				{
+					hitAGrid = true;
+					break;
+				}
+			}
+		}
+
+		if (!hitAGrid)
+		{
+			break;
+		}
+	}
+
+	return ret;
 }
 
 
