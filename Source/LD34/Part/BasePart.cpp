@@ -38,6 +38,7 @@ void ABasePart::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	GridLockTime -= DeltaTime;
 }
 
 float ABasePart::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
@@ -83,8 +84,8 @@ void ABasePart::GoFlipping()
 
 		if (p)
 		{
-			const float FLIP_LINEAR_FORCE = 100;
-			const float FLIP_ANGULAR_FORCE = 100;
+			const float FLIP_LINEAR_FORCE = 10;
+			const float FLIP_ANGULAR_FORCE = 3;
 
 			p->AddImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_LINEAR_FORCE, -FLIP_LINEAR_FORCE, 0), FVector(FLIP_LINEAR_FORCE, FLIP_LINEAR_FORCE, 0))), NAME_None, true);
 			p->AddAngularImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE), FVector(FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE))), NAME_None, true);
@@ -98,8 +99,6 @@ void ABasePart::GoFlipping()
 
 void ABasePart::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
-	UE_LOG(LogTemp, Display, TEXT("%s COL %s"), *GetName(), *OtherActor->GetName());
-
 	auto g = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor());
 
 	if (g)

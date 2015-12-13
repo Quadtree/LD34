@@ -63,6 +63,15 @@ public:
 	UFUNCTION()
 	void OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit);
 
+	float Power;
+
+	float MaxPower;
+
+	float PowerRegenRate;
+
+	UFUNCTION(BlueprintPure, Category = Power)
+	float GetPowerPct();
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };

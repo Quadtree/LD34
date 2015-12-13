@@ -44,6 +44,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = PartType)
 	float OddsOfSurvival;
 
+	UPROPERTY(EditAnywhere, Category = Power)
+	float MaxPowerMod;
+
+	UPROPERTY(EditAnywhere, Category = Power)
+	float PowerRegenMod;
+
 	void GoFlipping();
 
 	UFUNCTION()

@@ -65,6 +65,10 @@ void AGrid::Tick( float DeltaTime )
 		}
 		
 	}
+
+	Power += PowerRegenRate * DeltaTime;
+
+	Power = FMath::Clamp(Power, 0.f, MaxPower);
 }
 
 // Called to bind functionality to input
@@ -244,6 +248,9 @@ void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 
 			if (Part->IsCommandCenter) CommandCenters++;
 
+			MaxPower += Part->MaxPowerMod;
+			PowerRegenRate += Part->PowerRegenMod;
+
 			auto p = Cast<UPrimitiveComponent>(myRoot);
 
 			if (p)
@@ -295,6 +302,9 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 
 		if (partApart->IsCommandCenter) CommandCenters--;
 
+		MaxPower += partApart->MaxPowerMod;
+		PowerRegenRate += partApart->PowerRegenMod;
+
 		partApart->DetachFromGrid();
 	}
 	else
@@ -305,12 +315,10 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 
 void AGrid::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
-	UE_LOG(LogTemp, Display, TEXT("%s COL %s"), *GetName(), *OtherActor->GetName());
-
 	if (auto bp = Cast<ABasePart>(OtherActor))
 	{
 		// make sure this component is unattached...
-		if (!bp->GetAttachParentActor())
+		if (!bp->GetAttachParentActor() && (bp->GridLockTime <= 0 || bp->LockedGrid != GetName()))
 		{
 			FVector localSpace = this->GetTransform().InverseTransformPosition(bp->GetActorLocation());
 
@@ -321,5 +329,17 @@ void AGrid::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, F
 
 			ContinuityCheck();
 		}
+	}
+}
+
+float AGrid::GetPowerPct()
+{
+	if (MaxPower > 0.1f)
+	{
+		return Power / MaxPower;
+	}
+	else
+	{
+		return 0;
 	}
 }
