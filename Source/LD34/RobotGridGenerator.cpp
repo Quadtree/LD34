@@ -19,19 +19,19 @@ void ARobotGridGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	for (int32 x = 0; x < 20; ++x)
+	for (int32 x = 0; x < 25; ++x)
 	{
 		HalfGrid.Add(TArray<TSubclassOf<class ABasePart>>());
 		
-		for (int32 y = 0; y < 20; ++y)
+		for (int32 y = 0; y < 25; ++y)
 		{
 			HalfGrid[x].Add(TSubclassOf<class ABasePart>());
 		}
 	}
 
-	int32 targetArmorBlocks = FMath::RandRange(Value / 2, Value * 2);
+	int32 targetArmorBlocks = FMath::FloorToInt(FMath::FRandRange(Value * 0.666f, Value * 1.f));
 
-	SetCell(0, 10, Part[0]);
+	SetCell(10, 0, Part[0]);
 
 	int32 armorBlocks = 1;
 
@@ -50,7 +50,7 @@ void ARobotGridGenerator::BeginPlay()
 
 			while (FMath::Rand() % 4 != 0 && armorBlocks < targetArmorBlocks)
 			{
-				if (SetCell(pt.X, pt.Y, Part[0])) armorBlocks += pt.X == 0 ? 1 : 2;
+				if (SetCell(pt.X, pt.Y, Part[0])) armorBlocks += (pt.Y == 0 ? 1 : 2);
 
 				pt += move;
 			}
@@ -70,7 +70,7 @@ void ARobotGridGenerator::BeginPlay()
 			{
 				for (int32 y = pt.Y; y <= pt2.Y; ++y)
 				{
-					if (SetCell(x, y, Part[0])) armorBlocks += x == 0 ? 1 : 2;
+					if (SetCell(x, y, Part[0])) armorBlocks += (y == 0 ? 1 : 2);
 				}
 			}
 		}
@@ -144,12 +144,14 @@ void ARobotGridGenerator::BeginPlay()
 			{
 				if (HalfGrid[x][y])
 				{
-					g->CreateAndAddToGrid(HalfGrid[x][y], x, y - 10);
+					g->CreateAndAddToGrid(HalfGrid[x][y], x - 10, y);
 
-					if (x != 0) g->CreateAndAddToGrid(HalfGrid[x][y], -x, y - 10);
+					if (y != 0) g->CreateAndAddToGrid(HalfGrid[x][y], x - 10, -y);
 				}
 			}
 		}
+
+		g->SpawnDefaultController();
 
 		Destroy();
 	}
@@ -186,18 +188,18 @@ float ARobotGridGenerator::CalcActualValue(bool validate)
 				}
 			}
 
-			if (typeIndex == 1) commandCenters += (x == 0 ? 1 : 2);
-			if (typeIndex == 4) engines += (x == 0 ? 1 : 2);
-			if (typeIndex == 2) weapons += (x == 0 ? 1 : 2);
+			if (typeIndex == 1) commandCenters += (y == 0 ? 1 : 2);
+			if (typeIndex == 4) engines += (y == 0 ? 1 : 2);
+			if (typeIndex == 2) weapons += (y == 0 ? 1 : 2);
 
 			if (typeIndex != -1)
 			{
-				ret += PartCost[typeIndex] * (x == 0 ? 1 : 2);
+				ret += PartCost[typeIndex] * (y == 0 ? 1 : 2);
 			}
 		}
 	}
 
-	if (validate && (!commandCenters || !engines || !weapons)) return 0;
+	if (validate && (!commandCenters || (engines < Value / 3) || !weapons)) return 0;
 
 	return ret;
 }
