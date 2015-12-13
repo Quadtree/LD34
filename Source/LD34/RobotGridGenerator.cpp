@@ -209,8 +209,8 @@ float ARobotGridGenerator::CalcActualValue(bool validate)
 			}
 
 			if (typeIndex == 1) commandCenters += (y == 0 ? 1 : 2);
-			if (typeIndex == 4) engines += (y == 0 ? 1 : 2);
-			if (typeIndex == 2) weapons += (y == 0 ? 1 : 2);
+			if (typeIndex == 4 || typeIndex == 5) engines += (y == 0 ? 1 : 2);
+			if (typeIndex == 2 || typeIndex == 6 || typeIndex == 7) weapons += (y == 0 ? 1 : 2);
 			if (typeIndex == 3) power += (y == 0 ? 1 : 2);
 
 			if (typeIndex != -1)
