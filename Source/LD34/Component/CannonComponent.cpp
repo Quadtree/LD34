@@ -39,6 +39,8 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 	AGrid* GridParent = Cast<AGrid>(this->GetAttachmentRootActor());
 
+	bool onTarget = false;
+
 	if (GridParent && GridParent->CommandCenters)
 	{
 
@@ -50,12 +52,16 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 		FVector2D delta = GridParent->Destination - myLoc;
 
-		float aimDegrees = FMath::FixedTurn(currentRotationDegrees, FMath::RadiansToDegrees(FMath::Atan2(delta.Y, delta.X)), halfAimConeDegrees);
+		float desiredAimDegrees = FMath::RadiansToDegrees(FMath::Atan2(delta.Y, delta.X));
+
+		float aimDegrees = FMath::FixedTurn(currentRotationDegrees, desiredAimDegrees, halfAimConeDegrees);
+
+		onTarget = FMath::Abs(FMath::UnwindDegrees(aimDegrees) - FMath::UnwindDegrees(desiredAimDegrees)) < 0.1f;
 
 		this->SetWorldRotation(FRotator(0, aimDegrees, 0));
 	}
 
-	if (GridParent && GridParent->CommandCenters && (GridParent->IsFiringGroup0 && FireGroup == 0) && CooldownLeft <= 0 && GridParent->Power >= EnergyToFire)
+	if (GridParent && GridParent->CommandCenters && (GridParent->IsFiringGroup0 && FireGroup == 0) && CooldownLeft <= 0 && GridParent->Power >= EnergyToFire && onTarget)
 	{
 		FActorSpawnParameters p;
 
@@ -66,6 +72,8 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 		if (a)
 		{
 			a->Vel = GetComponentRotation().RotateVector(FVector(ProjectileSpeed, 0, 0));
+
+			if (auto pb = Cast<UPrimitiveComponent>(GridParent->GetRootComponent())) a->Vel += pb->GetPhysicsLinearVelocityAtPoint(GetComponentLocation());
 
 			/*auto root = Cast<UPrimitiveComponent>(a->GetRootComponent());
 
