@@ -39,7 +39,7 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 	AGrid* GridParent = Cast<AGrid>(this->GetAttachmentRootActor());
 
-	if (GridParent)
+	if (GridParent && GridParent->CommandCenters)
 	{
 
 		float currentRotationDegrees = GetOwner()->GetActorRotation().Yaw;
@@ -55,7 +55,7 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 		this->SetWorldRotation(FRotator(0, aimDegrees, 0));
 	}
 
-	if (GridParent && (GridParent->IsFiringGroup0 && FireGroup == 0) && CooldownLeft <= 0 && GridParent->Power >= EnergyToFire)
+	if (GridParent && GridParent->CommandCenters && (GridParent->IsFiringGroup0 && FireGroup == 0) && CooldownLeft <= 0 && GridParent->Power >= EnergyToFire)
 	{
 		FActorSpawnParameters p;
 

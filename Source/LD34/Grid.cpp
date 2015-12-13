@@ -196,6 +196,9 @@ void AGrid::ContinuityCheck()
 		{
 			UE_LOG(LogTemp, Display, TEXT("Split! New grid has %s parts, grid 0 has %s parts"), *FString::FromInt(distinctGrids[i].Num()), *FString::FromInt(distinctGrids[0].Num()));
 
+			newGrid->SpawnDefaultController();
+			newGrid->Faction = Faction;
+
 			for (auto a : distinctGrids[i])
 			{
 				this->RemoveAt(a->GridX, a->GridY);
