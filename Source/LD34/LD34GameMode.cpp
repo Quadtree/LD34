@@ -42,11 +42,11 @@ void ALD34GameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	WaveChargeRate += ChargeRateRiseRate[Difficulty] * DeltaSeconds * 2.f;
-	WavePower += WaveChargeRate * DeltaSeconds * 0.3f;
+	WaveChargeRate += ChargeRateRiseRate[Difficulty] * DeltaSeconds * 3.f * ((WaveChargeRate + 4) / 6);
+	WavePower += WaveChargeRate * DeltaSeconds * 0.17f;
 	WaveTimeCharge += DeltaSeconds;
 
-	if (WaveTimeCharge > 45.f)
+	if (WaveTimeCharge > FMath::Clamp(WaveChargeRate * 10, 30.f, 60.f))
 	{
 		UE_LOG(LogTemp, Display, TEXT("Spawning with power %s"), *FString::SanitizeFloat(WavePower));
 

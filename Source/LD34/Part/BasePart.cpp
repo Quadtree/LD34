@@ -11,7 +11,7 @@ ABasePart::ABasePart()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	OddsOfSurvival = .6f;
+	OddsOfSurvival = .4f;
 }
 
 // Called when the game starts or when spawned
@@ -81,7 +81,7 @@ float ABasePart::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 		Health = MaxHealth;
 	}
 
-	UE_LOG(LogTemp, Display, TEXT("%s took %s damage health is now %s"), *GetName(), *FString::SanitizeFloat(DamageAmount), *FString::SanitizeFloat(Health));
+	//UE_LOG(LogTemp, Display, TEXT("%s took %s damage health is now %s"), *GetName(), *FString::SanitizeFloat(DamageAmount), *FString::SanitizeFloat(Health));
 
 	return ret;
 }

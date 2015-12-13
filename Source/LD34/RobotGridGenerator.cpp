@@ -201,7 +201,7 @@ void ARobotGridGenerator::DoGenerate()
 
 		if (power >= Value / THAT_RATIO && engines >= Value / THAT_RATIO && weapons >= Value / THAT_RATIO && commandCenters && actVal > Value) break;
 
-		UE_LOG(LogTemp, Display, TEXT("%s vs %s"), *FString::SanitizeFloat(actVal), *FString::SanitizeFloat(Value));
+		//UE_LOG(LogTemp, Display, TEXT("%s vs %s"), *FString::SanitizeFloat(actVal), *FString::SanitizeFloat(Value));
 
 		/*if (actVal > Value)
 		{
@@ -249,7 +249,7 @@ void ARobotGridGenerator::DoGenerate()
 			}
 		}
 
-		UE_LOG(LogTemp, Display, TEXT("Placing %s at %s"), *FString::FromInt(pInd), *pt.ToString());
+		//UE_LOG(LogTemp, Display, TEXT("Placing %s at %s"), *FString::FromInt(pInd), *pt.ToString());
 
 		SetCell(pt.X, pt.Y, Part[pInd]);
 		//}

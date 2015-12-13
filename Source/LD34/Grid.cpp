@@ -34,6 +34,13 @@ void AGrid::BeginPlay()
 
 	CameraHeight = CameraDefaultHeight;
 	CameraDesiredHeight = CameraDefaultHeight;
+
+	if (auto c = FindComponentByClass<UCameraComponent>())
+	{
+#if PLATFORM_HTML5 || PLATFORM_ANDROID || PLATFORM_IOS || PLATFORM_WINRT
+		c->PostProcessSettings.AutoExposureBias = ES2Brightness;
+#endif
+	}
 }
 
 // Called every frame

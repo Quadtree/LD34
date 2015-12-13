@@ -92,7 +92,7 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 			CooldownLeft = ShotCooldown;
 
-			UE_LOG(LogTemp, Display, TEXT("Spawned!"));
+			//UE_LOG(LogTemp, Display, TEXT("Spawned!"));
 
 			GridParent->Power -= EnergyToFire;
 

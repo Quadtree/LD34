@@ -97,6 +97,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Sound)
 	USoundBase* AddPartSound;
 
+	UPROPERTY(EditAnywhere, Category = Zoom)
+	float ES2Brightness;
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };
