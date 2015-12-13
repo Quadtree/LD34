@@ -37,20 +37,42 @@ void ARobotGridGenerator::BeginPlay()
 
 	while (armorBlocks < targetArmorBlocks)
 	{
-		FIntPoint pt = GetCellOfType(Part[0]);
-
-		FIntPoint move(0, 0);
-
 		if (FMath::Rand() % 2 == 0)
-			move.X = FMath::RandRange(-1, 1);
-		else
-			move.Y = FMath::RandRange(-1, 1);
-
-		while (FMath::Rand() % 4 != 0 && armorBlocks < targetArmorBlocks)
 		{
-			if (SetCell(pt.X, pt.Y, Part[0])) armorBlocks += pt.X == 0 ? 1 : 2;
+			FIntPoint pt = GetCellOfType(Part[0]);
 
-			pt += move;
+			FIntPoint move(0, 0);
+
+			if (FMath::Rand() % 2 == 0)
+				move.X = FMath::RandRange(-1, 1);
+			else
+				move.Y = FMath::RandRange(-1, 1);
+
+			while (FMath::Rand() % 4 != 0 && armorBlocks < targetArmorBlocks)
+			{
+				if (SetCell(pt.X, pt.Y, Part[0])) armorBlocks += pt.X == 0 ? 1 : 2;
+
+				pt += move;
+			}
+		}
+		else
+		{
+			FIntPoint pt = GetCellOfType(Part[0]);
+
+			FIntPoint pt2 = pt + FIntPoint(FMath::RandRange(0, 2), FMath::RandRange(0, 2));
+
+			/*int32 minX = FMath::Min(pt.X, pt2.X);
+			int32 maxX = FMath::Max(pt.X, pt2.X);
+			int32 minY = FMath::Min(pt.Y, pt2.Y);
+			int32 maxY = FMath::Max(pt.Y, pt2.Y);*/
+
+			for (int32 x = pt.X; x <= pt2.X; ++x)
+			{
+				for (int32 y = pt.Y; y <= pt2.Y; ++y)
+				{
+					if (SetCell(x, y, Part[0])) armorBlocks += x == 0 ? 1 : 2;
+				}
+			}
 		}
 	}
 
