@@ -53,4 +53,6 @@ private:
 	int32 engines = 0;
 	int32 weapons = 0;
 	int32 power = 0;
+
+	bool SpawnDone;
 };

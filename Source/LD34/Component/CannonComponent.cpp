@@ -56,9 +56,11 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 		float aimDegrees = FMath::FixedTurn(currentRotationDegrees, desiredAimDegrees, halfAimConeDegrees);
 
-		onTarget = FMath::Abs(FMath::FindDeltaAngle(FMath::DegreesToRadians(currentRotationDegrees), FMath::DegreesToRadians(desiredAimDegrees))) < FMath::DegreesToRadians(AimConeWidthDegrees / 2);  
+		//onTarget = FMath::Abs(FMath::FindDeltaAngle(FMath::DegreesToRadians(currentRotationDegrees), FMath::DegreesToRadians(desiredAimDegrees))) < FMath::DegreesToRadians(AimConeWidthDegrees / 2);  
 		
-		//FMath::Abs(FMath::UnwindDegrees(aimDegrees) - FMath::UnwindDegrees(desiredAimDegrees)) < 0.1f;
+		onTarget = FMath::Abs(FMath::UnwindDegrees(aimDegrees) - FMath::UnwindDegrees(desiredAimDegrees)) < 5.f;
+
+		//DrawDebugString(GetWorld(), GetComponentLocation(), FString::SanitizeFloat(GridParent->IsFiringGroup0), nullptr, FColor::Red, DeltaTime, true);
 
 		this->SetWorldRotation(FRotator(0, aimDegrees, 0));
 	}

@@ -19,10 +19,20 @@ void ARobotGridGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	
+}
+
+// Called every frame
+void ARobotGridGenerator::Tick( float DeltaTime )
+{
+	Super::Tick( DeltaTime );
+
+	if (SpawnDone) return;
+
 	for (int32 x = 0; x < 25; ++x)
 	{
 		HalfGrid.Add(TArray<TSubclassOf<class ABasePart>>());
-		
+
 		for (int32 y = 0; y < 25; ++y)
 		{
 			HalfGrid[x].Add(TSubclassOf<class ABasePart>());
@@ -78,7 +88,9 @@ void ARobotGridGenerator::BeginPlay()
 
 	int32 itr = 0;
 
-	while (FMath::Abs(CalcActualValue(true) - Value) > 2)
+	const int32 THAT_RATIO = 9;
+
+	while (true)
 	{
 		if (++itr > 10000)
 		{
@@ -88,57 +100,60 @@ void ARobotGridGenerator::BeginPlay()
 
 		float actVal = CalcActualValue(false);
 
+		if (power >= Value / THAT_RATIO && engines >= Value / THAT_RATIO && weapons >= Value / THAT_RATIO && commandCenters && actVal > Value) break;
+
 		UE_LOG(LogTemp, Display, TEXT("%s vs %s"), *FString::SanitizeFloat(actVal), *FString::SanitizeFloat(Value));
 
-		if (actVal > Value)
+		/*if (actVal > Value)
 		{
-			FIntPoint pt = GetCellNotOfType(Part[0]);
+		FIntPoint pt = GetCellNotOfType(Part[0]);
 
-			SetCell(pt.X, pt.Y, Part[0]);
+		SetCell(pt.X, pt.Y, Part[0]);
 		}
 		else
+		{*/
+		int32 pInd = FMath::RandRange(1, Part.Num() - 1);
+
+
+		if (power < Value / THAT_RATIO) pInd = 3;
+		if (engines < Value / THAT_RATIO) pInd = 4;
+		if (weapons < Value / THAT_RATIO) pInd = 2;
+
+		if (!commandCenters) pInd = 1;
+
+		FIntPoint pt;
+
+		for (int32 i = 0; i < 20; ++i)
 		{
-			int32 pInd = FMath::RandRange(1, Part.Num() - 1);
+			pt = GetCellOfType(Part[0]);
+			break;
 
-			
-			if (!power) pInd = 3;
-			if (engines < Value / 3) pInd = 4;
-			if (!weapons) pInd = 2;
-
-			if (!commandCenters) pInd = 1;
-
-			FIntPoint pt;
-
-			for (int32 i = 0; i < 20; ++i)
+			if (PartMountType[pInd] == 0)
 			{
-				pt = GetCellOfType(Part[0]);
-
-				if (PartMountType[pInd] == 0)
+				break;
+			}
+			else if (PartMountType[pInd] == 1)
+			{
+				// front mount
+				if (!GetCell(pt.X + 1, pt.Y))
 				{
 					break;
 				}
-				else if (PartMountType[pInd] == 1)
+			}
+			else if (PartMountType[pInd] == -1)
+			{
+				// rear mount
+				if (!GetCell(pt.X - 1, pt.Y))
 				{
-					// front mount
-					if (!GetCell(pt.X + 1, pt.Y))
-					{
-						break;
-					}
-				}
-				else if (PartMountType[pInd] == -1)
-				{
-					// rear mount
-					if (!GetCell(pt.X - 1, pt.Y))
-					{
-						break;
-					}
+					break;
 				}
 			}
-
-			UE_LOG(LogTemp, Display, TEXT("Placing %s at %s"), *FString::FromInt(pInd), *pt.ToString());
-
-			SetCell(pt.X, pt.Y, Part[pInd]);
 		}
+
+		UE_LOG(LogTemp, Display, TEXT("Placing %s at %s"), *FString::FromInt(pInd), *pt.ToString());
+
+		SetCell(pt.X, pt.Y, Part[pInd]);
+		//}
 	}
 
 	AGrid* g = GetWorld()->SpawnActor<AGrid>(GridType, GetActorLocation(), GetActorRotation());
@@ -162,13 +177,9 @@ void ARobotGridGenerator::BeginPlay()
 		g->SpawnDefaultController();
 
 		Destroy();
-	}
-}
 
-// Called every frame
-void ARobotGridGenerator::Tick( float DeltaTime )
-{
-	Super::Tick( DeltaTime );
+		SpawnDone = true;
+	}
 
 }
 

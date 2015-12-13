@@ -2,6 +2,7 @@
 
 #include "LD34.h"
 #include "LD34GameMode.h"
+#include "RobotGridGenerator.h"
 
 ALD34GameMode::ALD34GameMode()
 {
@@ -41,7 +42,21 @@ void ALD34GameMode::Tick(float DeltaSeconds)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Spawning with power %s"), *FString::SanitizeFloat(WavePower));
 
-		WavePower = 0;
+		while (WavePower > 25)
+		{
+			float nextValue = FMath::FRandRange(FMath::Max(WavePower / 2, 25.f), WavePower);
+
+			auto a = GetWorld()->SpawnActor<ARobotGridGenerator>(GeneratorType, FMath::RandPointInBox(FBox(FVector(-20000, -20000, 0), FVector(20000, 20000, 0))), FRotator::ZeroRotator);
+
+			if (a)
+			{
+				a->Value = nextValue;
+				a->Faction = 1;
+			}
+
+			WavePower -= nextValue;
+		}
+
 		WaveTimeCharge = 0;
 	}
 }

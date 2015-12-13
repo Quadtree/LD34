@@ -33,4 +33,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Diff)
 	TArray<float> ChargeRateRiseRate;
+
+	UPROPERTY(EditAnywhere, Category = Generation)
+	TSubclassOf<class ARobotGridGenerator> GeneratorType;
 };
