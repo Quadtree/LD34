@@ -69,6 +69,18 @@ void AGrid::Tick( float DeltaTime )
 	Power += PowerRegenRate * DeltaTime;
 
 	Power = FMath::Clamp(Power, 0.f, MaxPower);
+
+	const float MAX_SPEED = 5000;
+
+	if (auto a = Cast<UPrimitiveComponent>(GetRootComponent()))
+	{
+		float speed = a->GetPhysicsLinearVelocity().Size();
+
+		if (speed > MAX_SPEED)
+		{
+			a->SetPhysicsLinearVelocity(a->GetPhysicsLinearVelocity().GetSafeNormal() * MAX_SPEED);
+		}
+	}
 }
 
 // Called to bind functionality to input
