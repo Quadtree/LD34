@@ -16,7 +16,7 @@ UThrusterComponent::UThrusterComponent()
 
 	ThrustPower = 100000;
 
-	// ...
+	EnergyCost = 300;
 }
 
 
@@ -91,6 +91,10 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 		}
 	}
 
+	if (!GridParent) Power = 0;
+
+	if (GridParent && GridParent->Power < EnergyCost * DeltaTime) Power = 0;
+
 	if (Power > 0.1f)
 	{
 		auto ForceTarget = Cast<UPrimitiveComponent>(PartParent->GetRootComponent());
@@ -98,6 +102,11 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 		if (ForceTarget)
 		{
 			ForceTarget->AddImpulseAtLocation(this->GetComponentRotation().RotateVector(FVector(-ThrustPower * DeltaTime * Power, 0, 0)), this->GetComponentLocation());
+		}
+
+		if (GridParent)
+		{
+			GridParent->Power -= EnergyCost * DeltaTime;
 		}
 	}
 

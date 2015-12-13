@@ -23,5 +23,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Thrust)
 	float ThrustPower;
+
+	UPROPERTY(EditAnywhere, Category = Thrust)
+	float EnergyCost;
 	
 };

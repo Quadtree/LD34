@@ -37,7 +37,7 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 	AGrid* GridParent = Cast<AGrid>(this->GetAttachmentRootActor());
 
-	if (GridParent && (GridParent->IsFiringGroup0 && FireGroup == 0) && CooldownLeft <= 0)
+	if (GridParent && (GridParent->IsFiringGroup0 && FireGroup == 0) && CooldownLeft <= 0 && GridParent->Power >= EnergyToFire)
 	{
 		FActorSpawnParameters p;
 
@@ -64,7 +64,7 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 			UE_LOG(LogTemp, Display, TEXT("Spawned!"));
 
-			// todo: use energy here
+			GridParent->Power -= EnergyToFire;
 		}
 		else
 		{
