@@ -58,6 +58,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = Split)
 	TSubclassOf<AGrid> BaseGridType;
 
+	int32 CommandCenters;
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };

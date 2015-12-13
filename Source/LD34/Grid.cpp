@@ -26,50 +26,8 @@ void AGrid::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	//UE_LOG(LogTemp, Display, TEXT("Pos %s"), *Destination.ToString());
-
-	//FVector2D delta = (Destination - FVector2D(GetActorLocation().X, GetActorLocation().Y));
-
-	//float angleToTarget = FMath::RadiansToDegrees(FMath::Atan2(delta.Y, delta.X));
-
-	//float curAngle = GetActorRotation().Yaw;
-
-	//float newAngle = FMath::FixedTurn(curAngle, angleToTarget, 1);
-
-	//FMath::FindDeltaAngle
-
-	if (DestinationMode)
+	if (DestinationMode && CommandCenters)
 	{
-		/*float curAngle = FMath::DegreesToRadians(GetActorRotation().Yaw);
-
-		FVector2D pointCenter(GetActorLocation().X, GetActorLocation().Y);
-
-		FVector2D pointLeft = pointCenter + FVector2D(FMath::Cos(curAngle - 0.22f), FMath::Sin(curAngle - 0.22f))*1;
-		FVector2D pointMiddle = pointCenter + FVector2D(FMath::Cos(curAngle), FMath::Sin(curAngle)) * 1;
-		FVector2D pointRight = pointCenter + FVector2D(FMath::Cos(curAngle + 0.22f), FMath::Sin(curAngle + 0.22f)) * 1;
-
-		//UE_LOG(LogTemp, Display, TEXT("Pos %s"), *Cast<UPrimitiveComponent>(GetRootComponent())->GetPhysicsAngularVelocity().ToString());
-
-		//DrawDebugSphere(GetWorld(), FVector(pointLeft.X, pointLeft.Y, 200), 50, 4, FColor::Red, false, 1);
-		//DrawDebugSphere(GetWorld(), FVector(pointMiddle.X, pointMiddle.Y, 200), 50, 4, FColor::Green, false, 1);
-		//DrawDebugSphere(GetWorld(), FVector(pointRight.X, pointRight.Y, 200), 50, 4, FColor::Blue, false, 1);
-
-		float leftDist = FVector2D::DistSquared(pointLeft, Destination);
-		float middleDist = FVector2D::DistSquared(pointMiddle, Destination);
-		float rightDist = FVector2D::DistSquared(pointRight, Destination);
-
-		float desiredAngularVelocity = 0;
-		float actualAngularVelocity = Cast<UPrimitiveComponent>(GetRootComponent())->GetPhysicsAngularVelocity().Z;
-
-		if (leftDist < middleDist && leftDist < rightDist)
-		{
-			desiredAngularVelocity = -120;
-		}
-
-		if (rightDist < middleDist && rightDist < leftDist)
-		{
-			desiredAngularVelocity = 120;
-		}*/
 
 		float desiredAngularVelocity = 0;
 		float actualAngularVelocity = Cast<UPrimitiveComponent>(GetRootComponent())->GetPhysicsAngularVelocity().Z;
@@ -97,15 +55,6 @@ void AGrid::Tick( float DeltaTime )
 		}
 		
 	}
-
-	/*auto p = Cast<UPrimitiveComponent>(GetRootComponent());
-
-	if (p)
-	{
-		p->GetBodyInstance()->UpdateMassProperties();
-
-		UE_LOG(LogTemp, Display, TEXT("%s mass is now %s (%s)"), *p->GetName(), *FString::SanitizeFloat(p->GetMass()), *FString::FromInt(p->GetNumChildrenComponents()));
-	}*/
 }
 
 // Called to bind functionality to input
@@ -278,9 +227,12 @@ void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 			}
 
 			root->SetRelativeLocation(FVector(X * 100, Y * 100, 0));
+			root->SetRelativeRotation(FRotator::ZeroRotator);
 			root->AttachTo(myRoot, NAME_None, EAttachLocation::KeepRelativeOffset, true);
 			Part->GridX = X;
 			Part->GridY = Y;
+
+			if (Part->IsCommandCenter) CommandCenters++;
 
 			auto p = Cast<UPrimitiveComponent>(myRoot);
 
@@ -330,6 +282,8 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 	{
 		ABasePart* partApart = Cells[X][Y];
 		Cells[X][Y] = nullptr;
+
+		if (partApart->IsCommandCenter) CommandCenters--;
 
 		partApart->DetachFromGrid();
 	}

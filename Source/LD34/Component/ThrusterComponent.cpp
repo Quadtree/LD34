@@ -54,7 +54,7 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 
 	float Power = 0;
 
-	if (PartParent && GridParent)
+	if (PartParent && GridParent && GridParent->CommandCenters)
 	{
 		if (GridParent->ForwardBackwardThrust > 0.1f && Facing == 2) Power = GridParent->ForwardBackwardThrust;
 		if (GridParent->ForwardBackwardThrust < -0.1f && Facing == 0) Power = -GridParent->ForwardBackwardThrust;
