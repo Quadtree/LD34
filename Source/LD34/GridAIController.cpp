@@ -19,9 +19,9 @@ void AGridAIController::Tick(float DeltaSeconds)
 	if (p && p->CommandCenters)
 	{
 		FVector desiredVV(0,0,0);
-		FVector currentVV;
+		FVector currentVV(0,0,0);
 
-		auto myRoot = Cast<UPrimitiveComponent>(GetRootComponent());
+		auto myRoot = Cast<UPrimitiveComponent>(p->GetRootComponent());
 		if (myRoot)
 		{
 			currentVV = myRoot->GetPhysicsLinearVelocity();
@@ -100,6 +100,10 @@ void AGridAIController::Tick(float DeltaSeconds)
 
 					float distSquared = FVector::DistSquared(newVV, desiredVV);
 
+					UE_LOG(LogTemp, Display, TEXT("%s %s"), *newVV.ToString(), *desiredVV.ToString());
+
+					//UE_LOG(LogTemp, Display, TEXT("%s %s %s %s"), *FString::FromInt(thrust), *FString::FromInt(strafe), *FString::SanitizeFloat(distSquared), *FString::SanitizeFloat(bestDistSquared));
+
 					if (distSquared < bestDistSquared)
 					{
 						bestDistSquared = distSquared;
@@ -109,7 +113,7 @@ void AGridAIController::Tick(float DeltaSeconds)
 				}
 			}
 
-			//UE_LOG(LogTemp, Display, TEXT("%s -- %s"), *FString::SanitizeFloat(bestThrust), *FString::SanitizeFloat(bestStrafe));
+			UE_LOG(LogTemp, Display, TEXT("%s -- %s"), *FString::SanitizeFloat(bestThrust), *FString::SanitizeFloat(bestStrafe));
 
 			p->ForwardBackwardThrust = bestThrust;
 			p->LeftRightThrust = bestStrafe;
