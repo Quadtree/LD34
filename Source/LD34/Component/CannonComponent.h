@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Cannon)
 	int32 FireGroup;
 
+	UPROPERTY(EditAnywhere, Category = Cannon)
+	float AimConeWidthDegrees;
+
 private:
 	float CooldownLeft;
 };

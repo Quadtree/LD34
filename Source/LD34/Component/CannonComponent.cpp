@@ -33,9 +33,27 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
+	
+
 	CooldownLeft -= DeltaTime;
 
 	AGrid* GridParent = Cast<AGrid>(this->GetAttachmentRootActor());
+
+	if (GridParent)
+	{
+
+		float currentRotationDegrees = GetOwner()->GetActorRotation().Yaw;
+
+		float halfAimConeDegrees = AimConeWidthDegrees / 2;
+
+		FVector2D myLoc(GetComponentLocation());
+
+		FVector2D delta = GridParent->Destination - myLoc;
+
+		float aimDegrees = FMath::FixedTurn(currentRotationDegrees, FMath::RadiansToDegrees(FMath::Atan2(delta.Y, delta.X)), halfAimConeDegrees);
+
+		this->SetWorldRotation(FRotator(0, aimDegrees, 0));
+	}
 
 	if (GridParent && (GridParent->IsFiringGroup0 && FireGroup == 0) && CooldownLeft <= 0 && GridParent->Power >= EnergyToFire)
 	{

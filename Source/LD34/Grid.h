@@ -47,6 +47,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = Destination)
 	FVector2D Destination;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Faction)
+	int32 Faction;
+
 	bool IsFiringGroup0;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
