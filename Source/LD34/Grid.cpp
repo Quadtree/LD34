@@ -89,7 +89,8 @@ void AGrid::Tick( float DeltaTime )
 	{
 		const float CAMERA_INTERPOLATE_SPEED = 0.05f;
 
-		cam->SetRelativeLocation(FVector(0, 0, CameraHeight));
+		//cam->SetRelativeLocation(FVector(0, 0, CameraHeight));
+		cam->OrthoWidth = CameraHeight;
 
 		CameraHeight = CameraHeight * (1 - CAMERA_INTERPOLATE_SPEED) + CameraDesiredHeight * CAMERA_INTERPOLATE_SPEED;
 	}
