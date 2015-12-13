@@ -12,8 +12,14 @@ UCLASS()
 class LD34_API ASpacePlayerController : public APlayerController
 {
 	GENERATED_BODY()
+public:
+	ASpacePlayerController();
 	
-	
-	
-	
+	virtual void Tick(float DeltaSeconds) override;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = WinLoss)
+	void OnLose();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = WinLoss)
+	void OnWin();
 };
