@@ -97,6 +97,15 @@ void AGrid::Tick( float DeltaTime )
 		}
 		
 	}
+
+	/*auto p = Cast<UPrimitiveComponent>(GetRootComponent());
+
+	if (p)
+	{
+		p->GetBodyInstance()->UpdateMassProperties();
+
+		UE_LOG(LogTemp, Display, TEXT("%s mass is now %s (%s)"), *p->GetName(), *FString::SanitizeFloat(p->GetMass()), *FString::FromInt(p->GetNumChildrenComponents()));
+	}*/
 }
 
 // Called to bind functionality to input
