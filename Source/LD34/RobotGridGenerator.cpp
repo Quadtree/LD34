@@ -216,7 +216,7 @@ void ARobotGridGenerator::DoGenerate()
 
 		if (power < Value / THAT_RATIO) pInd = 3;
 		if (engines < Value / THAT_RATIO) pInd = 4;
-		if (weapons < Value / THAT_RATIO) pInd = 2;
+		if (weapons < Value / THAT_RATIO) pInd = (FMath::Rand() % 2) ? 2 : (FMath::Rand() % 2 + 6);
 
 		if (!commandCenters) pInd = 1;
 

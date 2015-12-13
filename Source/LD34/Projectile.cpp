@@ -18,7 +18,7 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Lifespan = 4;
+	Lifespan = 2;
 }
 
 // Called every frame

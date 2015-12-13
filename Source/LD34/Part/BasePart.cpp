@@ -11,7 +11,7 @@ ABasePart::ABasePart()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	OddsOfSurvival = .75f;
+	OddsOfSurvival = .6f;
 }
 
 // Called when the game starts or when spawned
