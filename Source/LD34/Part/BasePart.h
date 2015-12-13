@@ -54,4 +54,7 @@ public:
 
 	UFUNCTION()
 	void OnHitHandler(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UPROPERTY(EditAnywhere, Category = Sound)
+	USoundBase* ExplosionSound;
 };

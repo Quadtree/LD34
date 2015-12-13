@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Cannon)
 	float AimConeWidthDegrees;
 
+	UPROPERTY(EditAnywhere, Category = Cannon)
+	USoundBase* FireSound;
+
 private:
 	float CooldownLeft;
 };

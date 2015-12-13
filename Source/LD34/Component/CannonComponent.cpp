@@ -95,6 +95,8 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 			UE_LOG(LogTemp, Display, TEXT("Spawned!"));
 
 			GridParent->Power -= EnergyToFire;
+
+			if (FireSound) UGameplayStatics::PlaySoundAtLocation(GetOwner(), FireSound, GetComponentLocation());
 		}
 		else
 		{

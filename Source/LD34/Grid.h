@@ -94,6 +94,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = Zoom)
 	float CameraMovespeed;
 
+	UPROPERTY(EditAnywhere, Category = Sound)
+	USoundBase* AddPartSound;
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };

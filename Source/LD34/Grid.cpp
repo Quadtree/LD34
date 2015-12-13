@@ -371,6 +371,8 @@ void AGrid::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, F
 
 			AddToGrid(bp, gridX, gridY);
 
+			if (AddPartSound) UGameplayStatics::PlaySoundAtLocation(this, AddPartSound, GetActorLocation());
+
 			ContinuityCheck();
 		}
 	}

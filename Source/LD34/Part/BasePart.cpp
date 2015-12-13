@@ -11,7 +11,7 @@ ABasePart::ABasePart()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	OddsOfSurvival = 1;
+	OddsOfSurvival = .3333f;
 }
 
 // Called when the game starts or when spawned
@@ -78,6 +78,8 @@ void ABasePart::DetachFromGrid()
 
 void ABasePart::GoFlipping()
 {
+	if (ExplosionSound) UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
+
 	if (FMath::FRand() <= OddsOfSurvival)
 	{
 		auto p = Cast<UPrimitiveComponent>(GetRootComponent());
