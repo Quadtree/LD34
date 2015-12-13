@@ -91,7 +91,7 @@ void AGridAIController::Tick(float DeltaSeconds)
 
 			for (int32 thrust = -1; thrust <= 1; ++thrust)
 			{
-				for (int32 strafe = -1; thrust <= 1; ++thrust)
+				for (int32 strafe = -1; strafe <= 1; ++strafe)
 				{
 					FVector newVV = currentVV;
 
@@ -108,6 +108,8 @@ void AGridAIController::Tick(float DeltaSeconds)
 					}
 				}
 			}
+
+			//UE_LOG(LogTemp, Display, TEXT("%s -- %s"), *FString::SanitizeFloat(bestThrust), *FString::SanitizeFloat(bestStrafe));
 
 			p->ForwardBackwardThrust = bestThrust;
 			p->LeftRightThrust = bestStrafe;

@@ -128,8 +128,8 @@ float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AC
 
 		UE_LOG(LogTemp, Display, TEXT("HIT PT %s %s"), *pt.HitInfo.ImpactPoint.ToString(), *localSpace.ToString());
 
-		int32 gridX = FMath::FloorToInt(localSpace.X / 100);
-		int32 gridY = FMath::FloorToInt(localSpace.Y / 100);
+		int32 gridX = FMath::RoundToInt(localSpace.X / 100);
+		int32 gridY = FMath::RoundToInt(localSpace.Y / 100);
 
 		if (Cells.Contains(gridX) && Cells[gridX].Contains(gridY) && Cells[gridX][gridY])
 		{
