@@ -34,7 +34,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Generation)
 	TSubclassOf<class AGrid> GridType;
 
-	float CalcActualValue();
+	float CalcActualValue(bool validate);
 
 	UPROPERTY(EditAnywhere, Category = Generation)
 	float Value;

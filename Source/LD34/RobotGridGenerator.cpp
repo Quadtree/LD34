@@ -78,7 +78,7 @@ void ARobotGridGenerator::BeginPlay()
 
 	int32 itr = 0;
 
-	while (FMath::Abs(CalcActualValue() - Value) > 2)
+	while (FMath::Abs(CalcActualValue(true) - Value) > 2)
 	{
 		if (++itr > 10000)
 		{
@@ -86,7 +86,7 @@ void ARobotGridGenerator::BeginPlay()
 			break;
 		}
 
-		float actVal = CalcActualValue();
+		float actVal = CalcActualValue(false);
 
 		UE_LOG(LogTemp, Display, TEXT("%s vs %s"), *FString::SanitizeFloat(actVal), *FString::SanitizeFloat(Value));
 
@@ -162,9 +162,13 @@ void ARobotGridGenerator::Tick( float DeltaTime )
 
 }
 
-float ARobotGridGenerator::CalcActualValue()
+float ARobotGridGenerator::CalcActualValue(bool validate)
 {
 	float ret = 0;
+
+	int32 commandCenters = 0;
+	int32 engines = 0;
+	int32 weapons = 0;
 
 	for (int32 x = 0; x < 20; ++x)
 	{
@@ -182,12 +186,18 @@ float ARobotGridGenerator::CalcActualValue()
 				}
 			}
 
+			if (typeIndex == 1) commandCenters += (x == 0 ? 1 : 2);
+			if (typeIndex == 4) engines += (x == 0 ? 1 : 2);
+			if (typeIndex == 2) weapons += (x == 0 ? 1 : 2);
+
 			if (typeIndex != -1)
 			{
 				ret += PartCost[typeIndex] * (x == 0 ? 1 : 2);
 			}
 		}
 	}
+
+	if (validate && (!commandCenters || !engines || !weapons)) return 0;
 
 	return ret;
 }
@@ -237,7 +247,7 @@ FIntPoint ARobotGridGenerator::GetCellNotOfType(TSubclassOf<class ABasePart> typ
 	{
 		for (int32 j = 0; j < 20; ++j)
 		{
-			if (HalfGrid[i][j] != type && FMath::Rand() % ++n == 0) ret = FIntPoint(i, j);
+			if (HalfGrid[i][j] && HalfGrid[i][j] != type && FMath::Rand() % ++n == 0) ret = FIntPoint(i, j);
 		}
 	}
 
