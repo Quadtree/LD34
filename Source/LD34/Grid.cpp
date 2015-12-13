@@ -53,7 +53,7 @@ void AGrid::Tick( float DeltaTime )
 
 		float deltaAngle = FMath::FindDeltaAngle(curAngle, angleToTarget);
 
-		desiredAngularVelocity = FMath::Pow(deltaAngle, 1) * 200;
+		desiredAngularVelocity = FMath::Pow(deltaAngle, 1) * 60;
 
 		if (FMath::Abs(actualAngularVelocity - desiredAngularVelocity) > 5)
 		{
