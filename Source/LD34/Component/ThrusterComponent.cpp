@@ -14,7 +14,7 @@ UThrusterComponent::UThrusterComponent()
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
 
-	ThrustPower = 150000;
+	ThrustPower = 250000;
 
 	EnergyCost = 300;
 }

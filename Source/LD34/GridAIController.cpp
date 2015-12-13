@@ -83,6 +83,10 @@ void AGridAIController::Tick(float DeltaSeconds)
 				desiredVV = delta * 800;
 			}
 		}
+		else
+		{
+			p->IsFiringGroup0 = false;
+		}
 
 		{
 			float bestThrust = 0;

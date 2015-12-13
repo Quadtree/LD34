@@ -25,7 +25,9 @@ void ABasePart::BeginPlay()
 
 	if (a)
 	{
-		a->OnComponentHit.AddUniqueDynamic(this, &ABasePart::OnHitHandler);
+		//if (!a->OnComponentHit.IsAlreadyBound(this, &ABasePart::OnHitHandler))
+		//	a->OnComponentHit.AddUniqueDynamic(this, &ABasePart::OnHitHandler);
+
 		a->SetLinearDamping(0.5f);
 		a->SetAngularDamping(2);
 	}
@@ -125,4 +127,11 @@ void ABasePart::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherCom
 	{
 		g->OnHitHandler(OtherActor, OtherComp, NormalImpulse, Hit);
 	}
+}
+
+void ABasePart::NotifyHit(UPrimitiveComponent * MyComp, AActor * Other, UPrimitiveComponent * OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult & Hit)
+{
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+
+	OnHitHandler(Other, OtherComp, NormalImpulse, Hit);
 }

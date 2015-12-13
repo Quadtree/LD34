@@ -59,4 +59,6 @@ public:
 	USoundBase* ExplosionSound;
 
 	float LooseTime;
+
+	virtual void NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 };

@@ -39,7 +39,7 @@ void ASpacePlayerController::Tick(float DeltaSeconds)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Player loses."));
+			//UE_LOG(LogTemp, Warning, TEXT("Player loses."));
 			OnLose();
 		}
 	}

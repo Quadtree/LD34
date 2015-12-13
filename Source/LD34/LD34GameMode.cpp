@@ -30,7 +30,7 @@ void ALD34GameMode::BeginPlay()
 	WaveChargeRate = InitialChargeRate[Difficulty];
 
 	WaveTimeCharge = 30;
-	WavePower = WaveChargeRate * 15;
+	WavePower = FMath::Max(WaveChargeRate * 15, 12.f);
 
 	for (int32 i = 0; i < 20; ++i)
 	{
@@ -50,9 +50,9 @@ void ALD34GameMode::Tick(float DeltaSeconds)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Spawning with power %s"), *FString::SanitizeFloat(WavePower));
 
-		while (WavePower > 25)
+		while (WavePower > 15)
 		{
-			float nextValue = FMath::FRandRange(FMath::Max(WavePower / 2, 25.f), WavePower);
+			float nextValue = FMath::FRandRange(FMath::Max(WavePower / 2, 15.f), WavePower);
 
 			auto a = GetWorld()->SpawnActor<ARobotGridGenerator>(GeneratorType, FindClearPoint(), FRotator::ZeroRotator);
 
@@ -63,9 +63,11 @@ void ALD34GameMode::Tick(float DeltaSeconds)
 			}
 
 			WavePower -= nextValue;
+
+			WaveTimeCharge = 0;
 		}
 
-		WaveTimeCharge = 0;
+		
 	}
 }
 

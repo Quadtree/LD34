@@ -23,7 +23,7 @@ void AGrid::BeginPlay()
 
 	if (a)
 	{
-		a->OnComponentHit.AddUniqueDynamic(this, &AGrid::OnHitHandler);
+		//a->OnComponentHit.AddUniqueDynamic(this, &AGrid::OnHitHandler);
 		a->SetLinearDamping(0.2f);
 		a->SetAngularDamping(0.2f);
 	}
@@ -114,14 +114,14 @@ void AGrid::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 
 void AGrid::ZoomIn()
 {
-	UE_LOG(LogTemp, Display, TEXT("Zoom in"));
+	//UE_LOG(LogTemp, Display, TEXT("Zoom in"));
 
 	CameraDesiredHeight = FMath::Clamp(CameraDesiredHeight - CameraMovespeed, MinCameraHeight, MaxCameraHeight);
 }
 
 void AGrid::ZoomOut()
 {
-	UE_LOG(LogTemp, Display, TEXT("Zoom out"));
+	//UE_LOG(LogTemp, Display, TEXT("Zoom out"));
 
 	CameraDesiredHeight = FMath::Clamp(CameraDesiredHeight + CameraMovespeed, MinCameraHeight, MaxCameraHeight);
 }
@@ -158,7 +158,7 @@ float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AC
 
 		FVector localSpace = this->GetTransform().InverseTransformPosition(pt.HitInfo.ImpactPoint);
 
-		UE_LOG(LogTemp, Display, TEXT("HIT PT %s %s"), *pt.HitInfo.ImpactPoint.ToString(), *localSpace.ToString());
+		//UE_LOG(LogTemp, Display, TEXT("HIT PT %s %s"), *pt.HitInfo.ImpactPoint.ToString(), *localSpace.ToString());
 
 		int32 gridX = FMath::RoundToInt(localSpace.X / 100);
 		int32 gridY = FMath::RoundToInt(localSpace.Y / 100);
@@ -169,7 +169,7 @@ float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AC
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("No part to hit at %s, %s"), *FString::FromInt(gridX), *FString::FromInt(gridY));
+			//UE_LOG(LogTemp, Warning, TEXT("No part to hit at %s, %s"), *FString::FromInt(gridX), *FString::FromInt(gridY));
 		}
 	}
 	else
@@ -310,7 +310,7 @@ void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 			{
 				p->GetBodyInstance()->UpdateMassProperties();
 
-				UE_LOG(LogTemp, Display, TEXT("%s mass is now %s"), *p->GetName(), *FString::SanitizeFloat(p->GetMass()));
+				//UE_LOG(LogTemp, Display, TEXT("%s mass is now %s"), *p->GetName(), *FString::SanitizeFloat(p->GetMass()));
 			}
 
 			if (!Cells.Contains(X)) Cells.Add(X);
@@ -335,7 +335,7 @@ void AGrid::CreateAndAddToGrid(TSubclassOf<class ABasePart> Part, int32 X, int32
 
 	if (NewPart)
 	{
-		UE_LOG(LogTemp, Display, TEXT("New part %s created"), *Part->GetName());
+		//UE_LOG(LogTemp, Display, TEXT("New part %s created"), *Part->GetName());
 	}
 	else
 	{
