@@ -18,6 +18,7 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Lifespan = 8;
 }
 
 // Called every frame
@@ -50,5 +51,7 @@ void AProjectile::Tick( float DeltaTime )
 			}
 		}
 	}
+
+	if ((Lifespan -= DeltaTime) <= 0) Destroy();
 }
 

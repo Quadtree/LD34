@@ -100,7 +100,7 @@ void AGridAIController::Tick(float DeltaSeconds)
 
 					float distSquared = FVector::DistSquared(newVV, desiredVV);
 
-					UE_LOG(LogTemp, Display, TEXT("%s %s"), *newVV.ToString(), *desiredVV.ToString());
+					//UE_LOG(LogTemp, Display, TEXT("%s %s"), *newVV.ToString(), *desiredVV.ToString());
 
 					//UE_LOG(LogTemp, Display, TEXT("%s %s %s %s"), *FString::FromInt(thrust), *FString::FromInt(strafe), *FString::SanitizeFloat(distSquared), *FString::SanitizeFloat(bestDistSquared));
 
@@ -113,7 +113,7 @@ void AGridAIController::Tick(float DeltaSeconds)
 				}
 			}
 
-			UE_LOG(LogTemp, Display, TEXT("%s -- %s"), *FString::SanitizeFloat(bestThrust), *FString::SanitizeFloat(bestStrafe));
+			//UE_LOG(LogTemp, Display, TEXT("%s -- %s"), *FString::SanitizeFloat(bestThrust), *FString::SanitizeFloat(bestStrafe));
 
 			p->ForwardBackwardThrust = bestThrust;
 			p->LeftRightThrust = bestStrafe;

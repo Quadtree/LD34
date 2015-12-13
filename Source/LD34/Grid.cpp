@@ -195,6 +195,12 @@ void AGrid::ContinuityCheck()
 		}
 	}
 
+	if (notCovered.Num() == 0 && !Cast<APlayerController>(GetController()))
+	{
+		Destroy();
+		return;
+	}
+
 	for (auto v : notCovered)
 	{
 		if (covered.Contains(v)) continue;
