@@ -100,6 +100,13 @@ void ARobotGridGenerator::BeginPlay()
 		{
 			int32 pInd = FMath::RandRange(1, Part.Num() - 1);
 
+			
+			if (!power) pInd = 3;
+			if (engines < Value / 3) pInd = 4;
+			if (!weapons) pInd = 2;
+
+			if (!commandCenters) pInd = 1;
+
 			FIntPoint pt;
 
 			for (int32 i = 0; i < 20; ++i)
@@ -113,7 +120,7 @@ void ARobotGridGenerator::BeginPlay()
 				else if (PartMountType[pInd] == 1)
 				{
 					// front mount
-					if (!GetCell(pt.X, pt.X + 1))
+					if (!GetCell(pt.X + 1, pt.Y))
 					{
 						break;
 					}
@@ -121,7 +128,7 @@ void ARobotGridGenerator::BeginPlay()
 				else if (PartMountType[pInd] == -1)
 				{
 					// rear mount
-					if (!GetCell(pt.X, pt.X - 1))
+					if (!GetCell(pt.X - 1, pt.Y))
 					{
 						break;
 					}
@@ -151,6 +158,7 @@ void ARobotGridGenerator::BeginPlay()
 			}
 		}
 
+		g->Faction = Faction;
 		g->SpawnDefaultController();
 
 		Destroy();
@@ -168,9 +176,10 @@ float ARobotGridGenerator::CalcActualValue(bool validate)
 {
 	float ret = 0;
 
-	int32 commandCenters = 0;
-	int32 engines = 0;
-	int32 weapons = 0;
+	commandCenters = 0;
+	engines = 0;
+	weapons = 0;
+	power = 0;
 
 	for (int32 x = 0; x < 20; ++x)
 	{
@@ -191,6 +200,7 @@ float ARobotGridGenerator::CalcActualValue(bool validate)
 			if (typeIndex == 1) commandCenters += (y == 0 ? 1 : 2);
 			if (typeIndex == 4) engines += (y == 0 ? 1 : 2);
 			if (typeIndex == 2) weapons += (y == 0 ? 1 : 2);
+			if (typeIndex == 3) power += (y == 0 ? 1 : 2);
 
 			if (typeIndex != -1)
 			{
@@ -199,7 +209,7 @@ float ARobotGridGenerator::CalcActualValue(bool validate)
 		}
 	}
 
-	if (validate && (!commandCenters || (engines < Value / 3) || !weapons)) return 0;
+	if (validate && (!commandCenters || (engines < Value / 3) || !weapons || !power)) return 0;
 
 	return ret;
 }
@@ -217,7 +227,7 @@ bool ARobotGridGenerator::SetCell(int32 x, int32 y, TSubclassOf<class ABasePart>
 
 TSubclassOf<class ABasePart> ARobotGridGenerator::GetCell(int32 x, int32 y)
 {
-	if (x < 0 || y < 0 || x >= 20 || y >= 20) TSubclassOf<class ABasePart>();
+	if (x < 0 || y < 0 || x >= 20 || y >= 20) return TSubclassOf<class ABasePart>();
 
 	return HalfGrid[x][y];
 }

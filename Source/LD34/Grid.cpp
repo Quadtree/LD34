@@ -73,7 +73,7 @@ void AGrid::Tick( float DeltaTime )
 
 	Power = FMath::Clamp(Power, 0.f, MaxPower);
 
-	const float MAX_SPEED = 5000;
+	const float MAX_SPEED = 2000;
 
 	if (auto a = Cast<UPrimitiveComponent>(GetRootComponent()))
 	{

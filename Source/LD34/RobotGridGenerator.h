@@ -44,4 +44,13 @@ public:
 
 	FIntPoint GetCellOfType(TSubclassOf<class ABasePart> type);
 	FIntPoint GetCellNotOfType(TSubclassOf<class ABasePart> type);
+
+	UPROPERTY(EditAnywhere, Category = Generation)
+	int32 Faction;
+
+private:
+	int32 commandCenters = 0;
+	int32 engines = 0;
+	int32 weapons = 0;
+	int32 power = 0;
 };

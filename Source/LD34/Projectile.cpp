@@ -2,6 +2,7 @@
 
 #include "LD34.h"
 #include "Projectile.h"
+#include "Grid.h"
 
 
 // Sets default values
@@ -34,7 +35,7 @@ void AProjectile::Tick( float DeltaTime )
 	{
 		for (auto& rd : res)
 		{
-			if (rd.Actor.Get() && rd.Actor != this->GetInstigator() && rd.Actor->GetRootComponent() && rd.Actor->GetRootComponent()->GetAttachmentRootActor() != this->GetInstigator() && rd.Component.Get() && rd.Component->GetOwner())
+			if (rd.Actor.Get() && rd.Actor != this->GetInstigator() && rd.Actor->GetRootComponent() && rd.Actor->GetRootComponent()->GetAttachmentRootActor() != this->GetInstigator() && Cast<AGrid>(rd.Actor->GetRootComponent()->GetAttachmentRootActor()) && rd.Component.Get() && rd.Component->GetOwner())
 			{
 				FPointDamageEvent pt;
 				pt.Damage = DamageOnHit;
