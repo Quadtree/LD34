@@ -11,6 +11,7 @@ ABasePart::ABasePart()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	OddsOfSurvival = 1;
 }
 
 // Called when the game starts or when spawned
@@ -19,6 +20,17 @@ void ABasePart::BeginPlay()
 	Super::BeginPlay();
 	
 	MaxHealth = Health;
+
+	auto a = Cast<UPrimitiveComponent>(GetRootComponent());
+
+	if (a)
+	{
+		a->OnComponentHit.AddUniqueDynamic(this, &ABasePart::OnHitHandler);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s No real root component"), *GetName());
+	}
 }
 
 // Called every frame
@@ -65,11 +77,33 @@ void ABasePart::DetachFromGrid()
 
 void ABasePart::GoFlipping()
 {
-	auto p = Cast<UPrimitiveComponent>(GetRootComponent());
-
-	if (p)
+	if (FMath::FRand() <= OddsOfSurvival)
 	{
-		p->AddImpulse(FMath::RandPointInBox(FBox(FVector(-1000, -1000, 0), FVector(1000, 1000, 0))), NAME_None, true);
-		p->AddAngularImpulse(FMath::RandPointInBox(FBox(FVector(-100, -100, -100), FVector(100, 100, 100))), NAME_None, true);
+		auto p = Cast<UPrimitiveComponent>(GetRootComponent());
+
+		if (p)
+		{
+			const float FLIP_LINEAR_FORCE = 100;
+			const float FLIP_ANGULAR_FORCE = 100;
+
+			p->AddImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_LINEAR_FORCE, -FLIP_LINEAR_FORCE, 0), FVector(FLIP_LINEAR_FORCE, FLIP_LINEAR_FORCE, 0))), NAME_None, true);
+			p->AddAngularImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE), FVector(FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE))), NAME_None, true);
+		}
+	}
+	else
+	{
+		Destroy();
+	}
+}
+
+void ABasePart::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
+{
+	UE_LOG(LogTemp, Display, TEXT("%s COL %s"), *GetName(), *OtherActor->GetName());
+
+	auto g = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor());
+
+	if (g)
+	{
+		g->OnHitHandler(OtherActor, OtherComp, NormalImpulse, Hit);
 	}
 }

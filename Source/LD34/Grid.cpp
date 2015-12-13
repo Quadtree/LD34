@@ -19,6 +19,16 @@ void AGrid::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	auto a = Cast<UPrimitiveComponent>(GetRootComponent());
+
+	if (a)
+	{
+		a->OnComponentHit.AddUniqueDynamic(this, &AGrid::OnHitHandler);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s No real root component"), *GetName());
+	}
 }
 
 // Called every frame
@@ -290,5 +300,26 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Remove attempt failed: Grid %s contains nothing at %s, %s"), *GetName(), *FString::FromInt(X), *FString::FromInt(Y));
+	}
+}
+
+void AGrid::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
+{
+	UE_LOG(LogTemp, Display, TEXT("%s COL %s"), *GetName(), *OtherActor->GetName());
+
+	if (auto bp = Cast<ABasePart>(OtherActor))
+	{
+		// make sure this component is unattached...
+		if (!bp->GetAttachParentActor())
+		{
+			FVector localSpace = this->GetTransform().InverseTransformPosition(bp->GetActorLocation());
+
+			int32 gridX = FMath::RoundToInt(localSpace.X / 100);
+			int32 gridY = FMath::RoundToInt(localSpace.Y / 100);
+
+			AddToGrid(bp, gridX, gridY);
+
+			ContinuityCheck();
+		}
 	}
 }

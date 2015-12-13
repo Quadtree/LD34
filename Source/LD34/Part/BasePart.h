@@ -41,5 +41,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = PartType)
 	bool IsCommandCenter;
 
+	UPROPERTY(EditAnywhere, Category = PartType)
+	float OddsOfSurvival;
+
 	void GoFlipping();
+
+	UFUNCTION()
+	void OnHitHandler(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };
