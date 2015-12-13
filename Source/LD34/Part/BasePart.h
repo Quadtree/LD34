@@ -37,4 +37,7 @@ public:
 	float GridLockTime;
 
 	void DetachFromGrid();
+
+	UPROPERTY(EditAnywhere, Category = PartType)
+	bool IsCommandCenter;
 };

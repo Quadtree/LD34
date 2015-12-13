@@ -48,6 +48,8 @@ public:
 	FVector2D Destination;
 
 	bool IsFiringGroup0;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 };

@@ -57,4 +57,12 @@ void ABasePart::DetachFromGrid()
 
 	GridLockTime = 5;
 	LockedGrid = parentGrid->GetName();
+
+	auto p = Cast<UPrimitiveComponent>(GetRootComponent());
+
+	if (p)
+	{
+		p->AddImpulse(FMath::RandPointInBox(FBox(FVector(-1000, -1000, 0), FVector(1000, 1000, 0))), NAME_None, true);
+		p->AddAngularImpulse(FMath::RandPointInBox(FBox(FVector(-100, -100, -100), FVector(100, 100, 100))), NAME_None, true);
+	}
 }

@@ -130,6 +130,40 @@ void AGrid::SetIsFiringGroup0(float val)
 	this->IsFiringGroup0 = val > 0.5f;
 }
 
+float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	float ret = 0;
+
+	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+	{
+		FPointDamageEvent const & pt = (FPointDamageEvent const &) DamageEvent;
+
+		FVector localSpace = this->GetTransform().InverseTransformPosition(pt.HitInfo.ImpactPoint);
+
+		UE_LOG(LogTemp, Display, TEXT("HIT PT %s %s"), *pt.HitInfo.ImpactPoint.ToString(), *localSpace.ToString());
+
+		int32 gridX = FMath::FloorToInt(localSpace.X / 100);
+		int32 gridY = FMath::FloorToInt(localSpace.Y / 100);
+
+		if (Cells.Contains(gridX) && Cells[gridX].Contains(gridY) && Cells[gridX][gridY])
+		{
+			ret = Cells[gridX][gridY]->TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No part to hit at %s, %s"), *FString::FromInt(gridX), *FString::FromInt(gridY));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Unrecognized class id %s"), *FString::FromInt(DamageEvent.ClassID));
+	}
+
+	return ret;
+}
+
 void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 {
 	if (Part)

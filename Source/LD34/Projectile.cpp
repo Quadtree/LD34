@@ -36,9 +36,16 @@ void AProjectile::Tick( float DeltaTime )
 		{
 			if (rd.Actor.Get() && rd.Actor != this->GetInstigator() && rd.Actor->GetRootComponent() && rd.Actor->GetRootComponent()->GetAttachmentRootActor() != this->GetInstigator() && rd.Component.Get() && rd.Component->GetOwner())
 			{
-				UE_LOG(LogTemp, Display, TEXT("Hit %s"), *rd.Component->GetName());
-				rd.Component->GetOwner()->TakeDamage(DamageOnHit, FDamageEvent(), this->GetInstigatorController(), this);
-				this->Destroy();
+				FPointDamageEvent pt;
+				pt.Damage = DamageOnHit;
+				pt.HitInfo.ImpactPoint = GetActorLocation();
+
+				//UE_LOG(LogTemp, Display, TEXT("Hit %s damage to %s %s"), *rd.Component->GetName(), *rd.Component->GetOwner()->GetName(), *FString::FromInt(pt.ClassID));
+
+				float dmg = rd.Component->GetOwner()->TakeDamage(DamageOnHit, pt, this->GetInstigatorController(), this);
+
+				if (dmg > 0.1f)
+					this->Destroy();
 			}
 		}
 	}
