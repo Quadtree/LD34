@@ -56,6 +56,24 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 
 	if (PartParent && GridParent && GridParent->CommandCenters)
 	{
+		FVector relativeLoc(0, 0, 0);
+
+		auto pc = Cast<UPrimitiveComponent>(GridParent->GetRootComponent());
+
+		if (pc)
+		{
+			//UE_LOG(LogTemp, Display, TEXT("COM %s CENT %s"), *pc->GetCenterOfMass().ToString(), *GridParent->GetTransform().GetLocation().ToString());
+			FVector centerOfMassLocalSpace = GridParent->GetTransform().InverseTransformPosition(pc->GetCenterOfMass());
+
+			relativeLoc = PartParent->GetRootComponent()->GetRelativeTransform().GetLocation() - centerOfMassLocalSpace;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Parent doesn't have a valid root component"));
+		}
+
+		DrawDebugString(GetWorld(), PartParent->GetActorLocation(), *relativeLoc.ToString(), nullptr, FColor::Green, DeltaTime);
+
 		if (GridParent->ForwardBackwardThrust > 0.1f && Facing == 2) Power = GridParent->ForwardBackwardThrust;
 		if (GridParent->ForwardBackwardThrust < -0.1f && Facing == 0) Power = -GridParent->ForwardBackwardThrust;
 
@@ -63,28 +81,28 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 		if (GridParent->LeftRightThrust < -0.1f && Facing == 1) Power = -GridParent->LeftRightThrust;
 
 		// nose thrusters, left/right
-		if (PartParent->GridX > 0)
+		if (relativeLoc.X > 0)
 		{
 			if (GridParent->LeftRightTurn > 0.1f && Facing == 3) Power = GridParent->LeftRightTurn;
 			if (GridParent->LeftRightTurn < -0.1f && Facing == 1) Power = -GridParent->LeftRightTurn;
 		}
 
 		// tail thrusters, left/right
-		if (PartParent->GridX < 0)
+		if (relativeLoc.X < 0)
 		{
 			if (GridParent->LeftRightTurn > 0.1f && Facing == 1) Power = GridParent->LeftRightTurn;
 			if (GridParent->LeftRightTurn < -0.1f && Facing == 3) Power = -GridParent->LeftRightTurn;
 		}
 
 		// left thrusters, forward/backward
-		if (PartParent->GridY > 0)
+		if (relativeLoc.Y > 0)
 		{
 			if (GridParent->LeftRightTurn > 0.1f && Facing == 0) Power = GridParent->LeftRightTurn;
 			if (GridParent->LeftRightTurn < -0.1f && Facing == 2) Power = -GridParent->LeftRightTurn;
 		}
 
 		// right thrusters, forward/backward
-		if (PartParent->GridY < 0)
+		if (relativeLoc.Y < 0)
 		{
 			if (GridParent->LeftRightTurn > 0.1f && Facing == 2) Power = GridParent->LeftRightTurn;
 			if (GridParent->LeftRightTurn < -0.1f && Facing == 0) Power = -GridParent->LeftRightTurn;
