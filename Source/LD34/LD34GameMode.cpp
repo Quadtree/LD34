@@ -29,8 +29,8 @@ void ALD34GameMode::BeginPlay()
 
 	WaveChargeRate = InitialChargeRate[Difficulty];
 
-	WaveTimeCharge = 60;
-	WavePower = FMath::Max(WaveChargeRate * 15, 12.f);
+	WaveTimeCharge = 1000;
+	WavePower = FMath::Max(WaveChargeRate * 7, 14.f);
 
 	for (int32 i = 0; i < 20; ++i)
 	{
@@ -42,13 +42,13 @@ void ALD34GameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	WaveChargeRate += ChargeRateRiseRate[Difficulty] * DeltaSeconds * 3.f * ((WaveChargeRate + 4) / 6);
+	WaveChargeRate += ChargeRateRiseRate[Difficulty] * DeltaSeconds * 2.0f * ((WaveChargeRate + 22) / 24);
 	WavePower += WaveChargeRate * DeltaSeconds * 0.17f;
 	WaveTimeCharge += DeltaSeconds;
 
-	if (WaveTimeCharge > FMath::Clamp(WaveChargeRate * 10, 30.f, 60.f))
+	if (WaveTimeCharge > FMath::Clamp(WaveChargeRate * 3, 20.f, 45.f))
 	{
-		UE_LOG(LogTemp, Display, TEXT("Spawning with power %s"), *FString::SanitizeFloat(WavePower));
+		//UE_LOG(LogTemp, Display, TEXT("Spawning with power %s"), *FString::SanitizeFloat(WavePower));
 
 		while (WavePower > 15)
 		{

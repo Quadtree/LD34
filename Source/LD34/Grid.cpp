@@ -362,8 +362,8 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 
 		if (partApart->IsCommandCenter) CommandCenters--;
 
-		MaxPower += partApart->MaxPowerMod;
-		PowerRegenRate += partApart->PowerRegenMod;
+		MaxPower -= partApart->MaxPowerMod;
+		PowerRegenRate -= partApart->PowerRegenMod;
 
 		partApart->DetachFromGrid();
 	}
