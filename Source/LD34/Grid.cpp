@@ -465,7 +465,7 @@ void AGrid::RecalculateBounds()
 		{
 			if (j.Value && j.Value->IsValidLowLevel())
 			{
-				BoundingSphereRadius = FMath::Max3(BoundingSphereRadius, FMath::Abs((i.Key * 100.f) - BoundingSphereCenter.X), FMath::Abs((j.Key * 100.f) - BoundingSphereCenter.Y));
+				BoundingSphereRadius = FMath::Max(BoundingSphereRadius, FVector::Dist(BoundingSphereCenter, FVector(i.Key * 100.f, j.Key * 100.f, 0)) + 71);
 			}
 		}
 	}
