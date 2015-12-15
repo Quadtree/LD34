@@ -197,7 +197,7 @@ void ARobotGridGenerator::DoGenerate()
 
 	int32 itr = 0;
 
-	const int32 THAT_RATIO = 9;
+	const int32 THAT_RATIO = 14;
 
 	while (true)
 	{
@@ -225,7 +225,7 @@ void ARobotGridGenerator::DoGenerate()
 
 
 		if (power < Value / THAT_RATIO) pInd = PART_ID_FUSION_REACTOR;
-		if (engines < Value / THAT_RATIO) pInd = (FMath::Rand() % 3 != 0) ? PART_ID_THRUSTER : PART_ID_ENGINE;
+		if (engines < Value / THAT_RATIO) pInd = PART_ID_THRUSTER;
 		if (weapons < Value / THAT_RATIO) pInd = (FMath::Rand() % 2) ? PART_ID_BOLT_CANNON : (FMath::Rand() % 2 == 0 ? PART_ID_BOLT_TURRET : PART_ID_PLASMA_CANNON);
 
 		if (!commandCenters) pInd = PART_ID_COMMAND;
