@@ -5,6 +5,16 @@
 #include "Part/BasePart.h"
 #include "Grid.h"
 
+const int32 PART_ID_ARMOR = 0;
+const int32 PART_ID_COMMAND = 1;
+const int32 PART_ID_BOLT_CANNON = 2;
+const int32 PART_ID_FUSION_REACTOR = 3;
+const int32 PART_ID_THRUSTER = 4;
+const int32 PART_ID_ENGINE = 5;
+const int32 PART_ID_BOLT_TURRET = 6;
+const int32 PART_ID_PLASMA_CANNON = 7;
+const int32 PART_ID_SHIELD_GENERATOR = 8;
+const int32 PART_ID_ARMOR2 = 9;
 
 // Sets default values
 ARobotGridGenerator::ARobotGridGenerator()
@@ -214,11 +224,11 @@ void ARobotGridGenerator::DoGenerate()
 		int32 pInd = FMath::RandRange(1, Part.Num() - 1);
 
 
-		if (power < Value / THAT_RATIO) pInd = 3;
-		if (engines < Value / THAT_RATIO) pInd = 4;
-		if (weapons < Value / THAT_RATIO) pInd = (FMath::Rand() % 2) ? 2 : (FMath::Rand() % 2 + 6);
+		if (power < Value / THAT_RATIO) pInd = PART_ID_FUSION_REACTOR;
+		if (engines < Value / THAT_RATIO) pInd = (FMath::Rand() % 3 != 0) ? PART_ID_THRUSTER : PART_ID_ENGINE;
+		if (weapons < Value / THAT_RATIO) pInd = (FMath::Rand() % 2) ? PART_ID_BOLT_CANNON : (FMath::Rand() % 2 == 0 ? PART_ID_BOLT_TURRET : PART_ID_PLASMA_CANNON);
 
-		if (!commandCenters) pInd = 1;
+		if (!commandCenters) pInd = PART_ID_COMMAND;
 
 		FIntPoint pt;
 

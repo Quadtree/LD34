@@ -26,5 +26,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Thrust)
 	float EnergyCost;
+
+	UPROPERTY(EditAnywhere, Category = Thrust)
+	bool ParticipatesInTurning;
 	
 };

@@ -17,6 +17,8 @@ UThrusterComponent::UThrusterComponent()
 	ThrustPower = 250000;
 
 	EnergyCost = 300;
+
+	ParticipatesInTurning = true;
 }
 
 
@@ -81,28 +83,28 @@ void UThrusterComponent::TickComponent( float DeltaTime, ELevelTick TickType, FA
 		if (GridParent->LeftRightThrust < -0.1f && Facing == 1) Power = -GridParent->LeftRightThrust;
 
 		// nose thrusters, left/right
-		if (relativeLoc.X > 0)
+		if (relativeLoc.X > 0 && ParticipatesInTurning)
 		{
 			if (GridParent->LeftRightTurn > 0.1f && Facing == 3) Power = GridParent->LeftRightTurn;
 			if (GridParent->LeftRightTurn < -0.1f && Facing == 1) Power = -GridParent->LeftRightTurn;
 		}
 
 		// tail thrusters, left/right
-		if (relativeLoc.X < 0)
+		if (relativeLoc.X < 0 && ParticipatesInTurning)
 		{
 			if (GridParent->LeftRightTurn > 0.1f && Facing == 1) Power = GridParent->LeftRightTurn;
 			if (GridParent->LeftRightTurn < -0.1f && Facing == 3) Power = -GridParent->LeftRightTurn;
 		}
 
 		// left thrusters, forward/backward
-		if (relativeLoc.Y > 0)
+		if (relativeLoc.Y > 0 && ParticipatesInTurning)
 		{
 			if (GridParent->LeftRightTurn > 0.1f && Facing == 0) Power = GridParent->LeftRightTurn;
 			if (GridParent->LeftRightTurn < -0.1f && Facing == 2) Power = -GridParent->LeftRightTurn;
 		}
 
 		// right thrusters, forward/backward
-		if (relativeLoc.Y < 0)
+		if (relativeLoc.Y < 0 && ParticipatesInTurning)
 		{
 			if (GridParent->LeftRightTurn > 0.1f && Facing == 2) Power = GridParent->LeftRightTurn;
 			if (GridParent->LeftRightTurn < -0.1f && Facing == 0) Power = -GridParent->LeftRightTurn;
