@@ -100,6 +100,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = Zoom)
 	float ES2Brightness;
 
+	void RecalculateBounds();
+
+	UPROPERTY(BlueprintReadOnly, Category = Bounding)
+	float BoundingSphereRadius;
+
+	UPROPERTY(BlueprintReadOnly, Category = Bounding)
+	FVector BoundingSphereCenter;
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
+
+	
 };

@@ -324,6 +324,8 @@ void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 			if (!Cells[X].Contains(Y)) Cells[X].Add(Y);
 
 			Cells[X][Y] = Part;
+
+			RecalculateBounds();
 		}
 		else
 		{
@@ -366,6 +368,8 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 		PowerRegenRate -= partApart->PowerRegenMod;
 
 		partApart->DetachFromGrid();
+
+		RecalculateBounds();
 	}
 	else
 	{
@@ -440,5 +444,29 @@ float AGrid::GetPowerPct()
 	else
 	{
 		return 0;
+	}
+}
+
+void AGrid::RecalculateBounds()
+{
+	BoundingSphereCenter = FVector(0, 0, 0);
+	auto pc = Cast<UPrimitiveComponent>(this->GetRootComponent());
+
+	if (pc)
+	{
+		BoundingSphereCenter = this->GetTransform().InverseTransformPosition(pc->GetCenterOfMass());
+	}
+
+	BoundingSphereRadius = 0;
+
+	for (auto i : Cells)
+	{
+		for (auto j : i.Value)
+		{
+			if (j.Value && j.Value->IsValidLowLevel())
+			{
+				BoundingSphereRadius = FMath::Max3(BoundingSphereRadius, FMath::Abs((i.Key * 100.f) - BoundingSphereCenter.X), FMath::Abs((j.Key * 100.f) - BoundingSphereCenter.Y));
+			}
+		}
 	}
 }

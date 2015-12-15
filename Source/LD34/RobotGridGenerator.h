@@ -36,7 +36,7 @@ public:
 
 	float CalcActualValue(bool validate);
 
-	UPROPERTY(EditAnywhere, Category = Generation)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Generation)
 	float Value;
 
 	bool SetCell(int32 x, int32 y, TSubclassOf<class ABasePart> val);
