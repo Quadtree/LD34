@@ -32,10 +32,12 @@ void AProjectile::Tick( float DeltaTime )
 
 	TArray<FOverlapResult> res;
 
-	if (GetWorld()->OverlapMultiByChannel(res, FVector(GetActorLocation().X, GetActorLocation().Y, 0), FQuat::Identity, ECollisionChannel::ECC_WorldDynamic, FCollisionShape::MakeSphere(40)))
+	if (GetWorld()->OverlapMultiByObjectType(res, FVector(GetActorLocation().X, GetActorLocation().Y, 0), FQuat::Identity, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeSphere(40)))
 	{
 		for (auto& rd : res)
 		{
+			//DrawDebugSphere(GetWorld(), GetActorLocation(), 50, 2, FColor::Green, false, 0.1f);
+
 			if (rd.Actor.Get() && rd.Actor != this->GetInstigator() && rd.Actor->GetRootComponent() && rd.Actor->GetRootComponent()->GetAttachmentRootActor() != this->GetInstigator() && Cast<AGrid>(rd.Actor->GetRootComponent()->GetAttachmentRootActor()) && rd.Component.Get() && rd.Component->GetOwner())
 			{
 				for (float dist = 0; dist < 120; dist += 5)

@@ -50,6 +50,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = Power)
 	float PowerRegenMod;
 
+	UPROPERTY(EditAnywhere, Category = Shield)
+	float ShieldMaxMod;
+
+	UPROPERTY(EditAnywhere, Category = Shield)
+	float ShieldRegenMod;
+
 	void GoFlipping();
 
 	UFUNCTION()

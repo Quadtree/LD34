@@ -108,6 +108,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = Bounding)
 	FVector BoundingSphereCenter;
 
+	UPROPERTY(BlueprintReadOnly, Category = Shield)
+	float Shield;
+
+	UPROPERTY(BlueprintReadOnly, Category = Shield)
+	float ShieldMax;
+
+	UPROPERTY(BlueprintReadOnly, Category = Shield)
+	float ShieldRegenRate;
+
+	UFUNCTION(BlueprintPure, Category = Shield)
+	float GetShieldPct();
+
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
 

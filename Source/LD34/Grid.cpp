@@ -79,8 +79,14 @@ void AGrid::Tick( float DeltaTime )
 	}
 
 	Power += PowerRegenRate * DeltaTime;
-
 	Power = FMath::Clamp(Power, 0.f, MaxPower);
+
+	const float SHIELD_POWER_PER_HP = 4;
+
+	float shieldPowerConsumed = FMath::Max(FMath::Min3((ShieldMax - Shield) * SHIELD_POWER_PER_HP, Power, ShieldRegenRate * SHIELD_POWER_PER_HP * DeltaTime), 0.f);
+
+	Shield += shieldPowerConsumed / SHIELD_POWER_PER_HP;
+	Shield = FMath::Clamp(Shield, 0.f, ShieldMax);
 
 	const float MAX_SPEED = 2000;
 
@@ -156,6 +162,12 @@ void AGrid::SetIsFiringGroup0(float val)
 float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (Shield >= DamageAmount)
+	{
+		Shield -= DamageAmount;
+		return DamageAmount;
+	}
 
 	float ret = 0;
 
@@ -310,6 +322,8 @@ void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
 
 			MaxPower += Part->MaxPowerMod;
 			PowerRegenRate += Part->PowerRegenMod;
+			ShieldMax += Part->ShieldMaxMod;
+			ShieldRegenRate += Part->ShieldRegenMod;
 
 			auto p = Cast<UPrimitiveComponent>(myRoot);
 
@@ -366,6 +380,8 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 
 		MaxPower -= partApart->MaxPowerMod;
 		PowerRegenRate -= partApart->PowerRegenMod;
+		ShieldMax -= partApart->ShieldMaxMod;
+		ShieldRegenRate -= partApart->ShieldRegenMod;
 
 		partApart->DetachFromGrid();
 
@@ -469,4 +485,12 @@ void AGrid::RecalculateBounds()
 			}
 		}
 	}
+}
+
+float AGrid::GetShieldPct()
+{
+	if (ShieldMax > 0)
+		return Shield / (3.14159f * FMath::Square(BoundingSphereRadius)) * 500;
+	else
+		return 0;
 }
