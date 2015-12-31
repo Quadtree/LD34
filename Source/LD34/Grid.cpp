@@ -12,6 +12,8 @@ AGrid::AGrid()
 	PrimaryActorTick.bCanEverTick = true;
 
 	DestinationMode = true;
+	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -298,7 +300,7 @@ ABasePart* AGrid::GetPartAt(int32 X, int32 Y)
 		return nullptr;
 }
 
-void AGrid::AddToGrid(class ABasePart* Part, int32 X, int32 Y)
+void AGrid::AddToGrid_Implementation(class ABasePart* Part, int32 X, int32 Y)
 {
 	if (Part)
 	{

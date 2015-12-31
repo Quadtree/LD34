@@ -3,6 +3,7 @@
 #include "LD34.h"
 #include "BasePart.h"
 #include "Grid.h"
+#include "UnrealNetwork.h"
 
 
 // Sets default values
@@ -12,6 +13,8 @@ ABasePart::ABasePart()
 	PrimaryActorTick.bCanEverTick = true;
 
 	OddsOfSurvival = .4f;
+	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -134,4 +137,11 @@ void ABasePart::NotifyHit(UPrimitiveComponent * MyComp, AActor * Other, UPrimiti
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
 	OnHitHandler(Other, OtherComp, NormalImpulse, Hit);
+}
+
+void ABasePart::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABasePart, Health);
 }

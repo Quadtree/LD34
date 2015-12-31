@@ -22,7 +22,7 @@ public:
 
 	// a typical bolt does 1000 health worth of damage
 	// if a part is reduced to zero health it goes flying, or if unattached, is destroyed
-	UPROPERTY(EditAnywhere, Category = Health)
+	UPROPERTY(EditAnywhere, Category = Health, Replicated)
 	float Health;
 
 	float MaxHealth;

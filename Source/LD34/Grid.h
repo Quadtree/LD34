@@ -23,7 +23,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	UFUNCTION(BlueprintCallable, Category = Grid)
+	UFUNCTION(BlueprintCallable, Category = Grid, NetMulticast, Reliable)
 	void AddToGrid(class ABasePart* Part, int32 X, int32 Y);
 	
 	UFUNCTION(BlueprintCallable, Category = Grid)
@@ -122,6 +122,4 @@ public:
 
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
-
-	
 };
