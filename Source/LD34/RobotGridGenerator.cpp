@@ -37,6 +37,14 @@ void ARobotGridGenerator::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	// only the server can spawn ships
+	// if one of these appears anywhere else it should just disappear
+	if (Role != ENetRole::ROLE_Authority)
+	{
+		Destroy();
+		return;
+	}
+
 	if (SpawnDone) return;
 
 	for (int32 x = 0; x < 25; ++x)

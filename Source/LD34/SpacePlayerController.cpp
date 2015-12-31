@@ -14,33 +14,34 @@ void ASpacePlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	
-
-	auto g = Cast<AGrid>(GetPawn());
-
-	//if (g) { UE_LOG(LogTemp, Display, TEXT("TICK! %s"), *FString::FromInt(g->CommandCenters)); }
-
-	if (!g || !g->CommandCenters)
+	if (this->Role == ENetRole::ROLE_Authority)
 	{
-		int32 n = 0;
-		AGrid* jumpTarget = nullptr;
+		auto g = Cast<AGrid>(GetPawn());
 
-		for (TActorIterator<AGrid> i(GetWorld()); i; ++i)
+		//if (g) { UE_LOG(LogTemp, Display, TEXT("TICK! %s"), *FString::FromInt(g->CommandCenters)); }
+
+		if (!g || !g->CommandCenters)
 		{
-			if (i->Faction == 0 && i->CommandCenters && ((FMath::Rand() % ++n) == 0))
+			int32 n = 0;
+			AGrid* jumpTarget = nullptr;
+
+			for (TActorIterator<AGrid> i(GetWorld()); i; ++i)
 			{
-				jumpTarget = *i;
+				if (i->Faction == 0 && i->CommandCenters && ((FMath::Rand() % ++n) == 0))
+				{
+					jumpTarget = *i;
+				}
 			}
-		}
 
-		if (jumpTarget)
-		{
-			this->Possess(jumpTarget);
-		}
-		else
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("Player loses."));
-			OnLose();
+			if (jumpTarget)
+			{
+				this->Possess(jumpTarget);
+			}
+			else
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("Player loses."));
+				OnLose();
+			}
 		}
 	}
 }
