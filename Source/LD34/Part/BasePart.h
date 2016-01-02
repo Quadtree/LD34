@@ -27,8 +27,14 @@ public:
 
 	float MaxHealth;
 	
+	UPROPERTY(Replicated)
 	int32 GridX;
+
+	UPROPERTY(Replicated)
 	int32 GridY;
+
+	UPROPERTY(Replicated)
+	class AGrid* ExpectedParentGrid;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 

@@ -49,6 +49,17 @@ void ABasePart::Tick( float DeltaTime )
 
 	AGrid* parentGrid = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor());
 
+	if (parentGrid && !ExpectedParentGrid)
+	{
+		// we're attached to something but the server says we shouldn't be
+		DetachFromGrid();
+	}
+
+	if (ExpectedParentGrid && !parentGrid)
+	{
+		ExpectedParentGrid->AddToGrid(this, GridX, GridY);
+	}
+
 	if (parentGrid)
 	{
 		LooseTime = 0;
@@ -57,7 +68,7 @@ void ABasePart::Tick( float DeltaTime )
 	{
 		LooseTime += DeltaTime;
 
-		if (LooseTime > 120)
+		if (LooseTime > 120 && Role == ROLE_Authority)
 		{
 			Destroy();
 		}
@@ -68,23 +79,26 @@ float ABasePart::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 {
 	float ret = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	Health -= ret;
-
-	if (Health <= 0)
+	if (Role == ROLE_Authority)
 	{
-		if (auto g = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor()))
+		Health -= ret;
+
+		if (Health <= 0)
 		{
-			g->RemoveAt(GridX, GridY);
+			if (auto g = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor()))
+			{
+				g->RemoveAt(GridX, GridY);
 
-			GoFlipping();
+				GoFlipping();
 
-			g->ContinuityCheck();
+				g->ContinuityCheck();
+			}
+
+			Health = MaxHealth;
 		}
 
-		Health = MaxHealth;
+		//UE_LOG(LogTemp, Display, TEXT("%s took %s damage health is now %s"), *GetName(), *FString::SanitizeFloat(DamageAmount), *FString::SanitizeFloat(Health));
 	}
-
-	//UE_LOG(LogTemp, Display, TEXT("%s took %s damage health is now %s"), *GetName(), *FString::SanitizeFloat(DamageAmount), *FString::SanitizeFloat(Health));
 
 	return ret;
 }
@@ -97,6 +111,8 @@ void ABasePart::DetachFromGrid()
 
 	GridLockTime = 5;
 	LockedGrid = parentGrid->GetName();
+
+	ExpectedParentGrid = nullptr;
 }
 
 void ABasePart::GoFlipping()
@@ -144,4 +160,7 @@ void ABasePart::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ABasePart, Health);
+	DOREPLIFETIME(ABasePart, GridX);
+	DOREPLIFETIME(ABasePart, GridY);
+	DOREPLIFETIME(ABasePart, ExpectedParentGrid);
 }

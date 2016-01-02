@@ -3,6 +3,7 @@
 #include "LD34.h"
 #include "Grid.h"
 #include "Part/BasePart.h"
+#include "UnrealNetwork.h"
 
 
 // Sets default values
@@ -167,37 +168,40 @@ float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AC
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	if (Shield >= DamageAmount)
-	{
-		Shield -= DamageAmount;
-		return DamageAmount;
-	}
-
 	float ret = 0;
 
-	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+	if (Role == ENetRole::ROLE_Authority)
 	{
-		FPointDamageEvent const & pt = (FPointDamageEvent const &) DamageEvent;
-
-		FVector localSpace = this->GetTransform().InverseTransformPosition(pt.HitInfo.ImpactPoint);
-
-		//UE_LOG(LogTemp, Display, TEXT("HIT PT %s %s"), *pt.HitInfo.ImpactPoint.ToString(), *localSpace.ToString());
-
-		int32 gridX = FMath::RoundToInt(localSpace.X / 100);
-		int32 gridY = FMath::RoundToInt(localSpace.Y / 100);
-
-		if (Cells.Contains(gridX) && Cells[gridX].Contains(gridY) && Cells[gridX][gridY])
+		if (Shield >= DamageAmount)
 		{
-			ret = Cells[gridX][gridY]->TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+			Shield -= DamageAmount;
+			return DamageAmount;
+		}
+	
+		if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+		{
+			FPointDamageEvent const & pt = (FPointDamageEvent const &) DamageEvent;
+
+			FVector localSpace = this->GetTransform().InverseTransformPosition(pt.HitInfo.ImpactPoint);
+
+			//UE_LOG(LogTemp, Display, TEXT("HIT PT %s %s"), *pt.HitInfo.ImpactPoint.ToString(), *localSpace.ToString());
+
+			int32 gridX = FMath::RoundToInt(localSpace.X / 100);
+			int32 gridY = FMath::RoundToInt(localSpace.Y / 100);
+
+			if (Cells.Contains(gridX) && Cells[gridX].Contains(gridY) && Cells[gridX][gridY])
+			{
+				ret = Cells[gridX][gridY]->TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+			}
+			else
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("No part to hit at %s, %s"), *FString::FromInt(gridX), *FString::FromInt(gridY));
+			}
 		}
 		else
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("No part to hit at %s, %s"), *FString::FromInt(gridX), *FString::FromInt(gridY));
+			UE_LOG(LogTemp, Warning, TEXT("Unrecognized class id %s"), *FString::FromInt(DamageEvent.ClassID));
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Unrecognized class id %s"), *FString::FromInt(DamageEvent.ClassID));
 	}
 
 	return ret;
@@ -205,6 +209,8 @@ float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AC
 
 void AGrid::ContinuityCheck()
 {
+	if (Role != ENetRole::ROLE_Authority) return;
+
 	TArray<TArray<ABasePart*>> distinctGrids;
 
 	TSet<ABasePart*> covered;
@@ -342,6 +348,7 @@ void AGrid::AddToGrid_Implementation(class ABasePart* Part, int32 X, int32 Y)
 			if (!Cells[X].Contains(Y)) Cells[X].Add(Y);
 
 			Cells[X][Y] = Part;
+			Part->ExpectedParentGrid = this;
 
 			RecalculateBounds();
 		}
@@ -399,7 +406,7 @@ void AGrid::RemoveAt(int32 X, int32 Y)
 
 void AGrid::OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
-	if (!CommandCenters) return;
+	if (!CommandCenters || Role != ROLE_Authority) return;
 
 	if (auto bp = Cast<ABasePart>(OtherActor))
 	{
@@ -497,4 +504,15 @@ float AGrid::GetShieldPct()
 		return Shield / (3.14159f * FMath::Square(BoundingSphereRadius)) * 500;
 	else
 		return 0;
+}
+
+void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AGrid, Shield);
+	DOREPLIFETIME(AGrid, Power);
+	DOREPLIFETIME(AGrid, Faction);
+	DOREPLIFETIME(AGrid, ForwardBackwardThrust);
+	DOREPLIFETIME(AGrid, LeftRightThrust);
 }

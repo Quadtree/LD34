@@ -31,8 +31,12 @@ public:
 
 	void RemoveAt(int32 X, int32 Y);
 
+	UPROPERTY(Replicated)
 	float ForwardBackwardThrust;
+
+	UPROPERTY(Replicated)
 	float LeftRightThrust;
+
 	float LeftRightTurn;
 
 	void SetForwardBackwardThrust(float val);
@@ -50,7 +54,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = Destination)
 	FVector2D Destination;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Faction)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Faction, Replicated)
 	int32 Faction;
 
 	bool IsFiringGroup0;
@@ -69,6 +73,7 @@ public:
 	UFUNCTION()
 	void OnHitHandler(AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit);
 
+	UPROPERTY(Replicated)
 	float Power;
 
 	float MaxPower;
@@ -108,7 +113,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = Bounding)
 	FVector BoundingSphereCenter;
 
-	UPROPERTY(BlueprintReadOnly, Category = Shield)
+	UPROPERTY(BlueprintReadOnly, Category = Shield, Replicated)
 	float Shield;
 
 	UPROPERTY(BlueprintReadOnly, Category = Shield)
