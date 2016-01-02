@@ -20,6 +20,8 @@ AGrid::AGrid()
 void AGrid::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UE_LOG(LogTemp, Warning, TEXT("Grid BeginPlay %s"), *FString::FromInt(Role));
 	
 	auto a = Cast<UPrimitiveComponent>(GetRootComponent());
 
@@ -350,7 +352,7 @@ void AGrid::AddToGrid_Implementation(class ABasePart* Part, int32 X, int32 Y)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Part passed in was null"));
+		UE_LOG(LogTemp, Warning, TEXT("%s Part passed in was null"), *FString::FromInt(this->Role));
 	}
 }
 

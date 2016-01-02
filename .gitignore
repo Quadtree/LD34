@@ -4,5 +4,6 @@ Intermediate
 Saved
 *.sdf
 *.opensdf
+*.opendb
 *.sln
 .~*
