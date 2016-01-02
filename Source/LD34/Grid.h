@@ -39,15 +39,12 @@ public:
 
 	float LeftRightTurn;
 
-	UFUNCTION(Server, WithValidation, Reliable)
 	void SetForwardBackwardThrust(float val);
 
-	UFUNCTION(Server, WithValidation, Reliable)
 	void SetLeftRightThrust(float val);
 
 	void SetLeftRightTurn(float val);
 
-	UFUNCTION(Server, WithValidation, Reliable)
 	void SetIsFiringGroup0(float val);
 
 	void ZoomIn();
@@ -139,4 +136,13 @@ private:
 
 	UFUNCTION(Server, WithValidation, Unreliable)
 	void ServerSetDestination(FVector2D newDest);
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerSetForwardBackwardThrust(float val);
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerSetLeftRightThrust(float val);
+
+	UFUNCTION(Server, WithValidation, Reliable)
+	void ServerSetIsFiringGroup0(float val);
 };

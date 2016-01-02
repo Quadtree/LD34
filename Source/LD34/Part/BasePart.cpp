@@ -25,27 +25,18 @@ void ABasePart::BeginPlay()
 	Super::BeginPlay();
 	
 	MaxHealth = Health;
-
-	auto a = Cast<UPrimitiveComponent>(GetRootComponent());
-
-	if (a)
-	{
-		//if (!a->OnComponentHit.IsAlreadyBound(this, &ABasePart::OnHitHandler))
-		//	a->OnComponentHit.AddUniqueDynamic(this, &ABasePart::OnHitHandler);
-
-		a->SetLinearDamping(0.5f);
-		a->SetAngularDamping(2);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s No real root component"), *GetName());
-	}
 }
 
 // Called every frame
 void ABasePart::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	if (auto a = Cast<UPrimitiveComponent>(GetRootComponent()))
+	{
+		a->SetLinearDamping(0.5f);
+		a->SetAngularDamping(2);
+	}
 
 	GridLockTime -= DeltaTime;
 

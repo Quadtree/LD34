@@ -22,21 +22,6 @@ void AGrid::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//UE_LOG(LogTemp, Warning, TEXT("Grid BeginPlay %s"), *FString::FromInt(Role));
-	
-	auto a = Cast<UPrimitiveComponent>(GetRootComponent());
-
-	if (a)
-	{
-		//a->OnComponentHit.AddUniqueDynamic(this, &AGrid::OnHitHandler);
-		a->SetLinearDamping(0.2f);
-		a->SetAngularDamping(0.2f);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s No real root component"), *GetName());
-	}
-
 	CameraHeight = CameraDefaultHeight;
 	CameraDesiredHeight = CameraDefaultHeight;
 
@@ -52,6 +37,12 @@ void AGrid::BeginPlay()
 void AGrid::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	if (auto a = Cast<UPrimitiveComponent>(GetRootComponent()))
+	{
+		a->SetLinearDamping(0.2f);
+		a->SetAngularDamping(0.2f);
+	}
 
 	if (DestinationMode && CommandCenters)
 	{
@@ -144,24 +135,38 @@ void AGrid::ZoomOut()
 	CameraDesiredHeight = FMath::Clamp(CameraDesiredHeight + CameraMovespeed, MinCameraHeight, MaxCameraHeight);
 }
 
-bool AGrid::SetForwardBackwardThrust_Validate(float val)
-{
-	return FMath::Abs(val) < 1.01f;
-}
-
-void AGrid::SetForwardBackwardThrust_Implementation(float val)
+void AGrid::SetForwardBackwardThrust(float val)
 {
 	this->ForwardBackwardThrust = val;
+
+	if (Role != ROLE_Authority) ServerSetForwardBackwardThrust(val);
 }
 
-bool AGrid::SetLeftRightThrust_Validate(float val)
+bool AGrid::ServerSetForwardBackwardThrust_Validate(float val)
 {
 	return FMath::Abs(val) < 1.01f;
 }
 
-void AGrid::SetLeftRightThrust_Implementation(float val)
+void AGrid::ServerSetForwardBackwardThrust_Implementation(float val)
+{
+	SetForwardBackwardThrust(val);
+}
+
+bool AGrid::ServerSetLeftRightThrust_Validate(float val)
+{
+	return FMath::Abs(val) < 1.01f;
+}
+
+void AGrid::SetLeftRightThrust(float val)
 {
 	this->LeftRightThrust = val;
+
+	if (Role != ROLE_Authority) ServerSetLeftRightThrust(val);
+}
+
+void AGrid::ServerSetLeftRightThrust_Implementation(float val)
+{
+	SetLeftRightThrust(val);
 }
 
 void AGrid::SetLeftRightTurn(float val)
@@ -169,14 +174,21 @@ void AGrid::SetLeftRightTurn(float val)
 	this->LeftRightTurn = val;
 }
 
-bool AGrid::SetIsFiringGroup0_Validate(float val)
+void AGrid::SetIsFiringGroup0(float val)
+{
+	this->IsFiringGroup0 = val > 0.5f;
+
+	if (Role != ROLE_Authority) ServerSetIsFiringGroup0(val);
+}
+
+bool AGrid::ServerSetIsFiringGroup0_Validate(float val)
 {
 	return true;
 }
 
-void AGrid::SetIsFiringGroup0_Implementation(float val)
+void AGrid::ServerSetIsFiringGroup0_Implementation(float val)
 {
-	this->IsFiringGroup0 = val > 0.5f;
+	SetIsFiringGroup0(val);
 }
 
 float AGrid::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
