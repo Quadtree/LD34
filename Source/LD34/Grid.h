@@ -65,6 +65,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Faction, Replicated)
 	int32 Faction;
 
+	UPROPERTY(Replicated)
 	bool IsFiringGroup0;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;

@@ -15,6 +15,8 @@ ABasePart::ABasePart()
 	OddsOfSurvival = .4f;
 	bReplicates = true;
 	bReplicateMovement = true;
+	NetPriority = 1;
+	NetUpdateFrequency = 1500;
 }
 
 // Called when the game starts or when spawned
@@ -57,6 +59,7 @@ void ABasePart::Tick( float DeltaTime )
 
 	if (ExpectedParentGrid && !parentGrid)
 	{
+		// the server says we're attached to something but we don't seem to be
 		ExpectedParentGrid->AddToGrid(this, GridX, GridY);
 	}
 
@@ -107,10 +110,13 @@ void ABasePart::DetachFromGrid_Implementation()
 {
 	AGrid* parentGrid = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor());
 
-	GetRootComponent()->DetachFromParent(true);
+	if (parentGrid)
+	{
+		GetRootComponent()->DetachFromParent(true);
 
-	GridLockTime = 5;
-	LockedGrid = parentGrid->GetName();
+		GridLockTime = 5;
+		LockedGrid = parentGrid->GetName();
+	}
 
 	ExpectedParentGrid = nullptr;
 }
@@ -119,22 +125,25 @@ void ABasePart::GoFlipping_Implementation()
 {
 	if (ExplosionSound) UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
 
-	if (FMath::FRand() <= OddsOfSurvival)
+	if (Role == ROLE_Authority)
 	{
-		auto p = Cast<UPrimitiveComponent>(GetRootComponent());
-
-		if (p)
+		if (FMath::FRand() <= OddsOfSurvival)
 		{
-			const float FLIP_LINEAR_FORCE = 600;
-			const float FLIP_ANGULAR_FORCE = 20;
+			auto p = Cast<UPrimitiveComponent>(GetRootComponent());
 
-			p->AddImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_LINEAR_FORCE, -FLIP_LINEAR_FORCE, 0), FVector(FLIP_LINEAR_FORCE, FLIP_LINEAR_FORCE, 0))), NAME_None, true);
-			p->AddAngularImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE), FVector(FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE))), NAME_None, true);
+			if (p)
+			{
+				const float FLIP_LINEAR_FORCE = 600;
+				const float FLIP_ANGULAR_FORCE = 20;
+
+				p->AddImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_LINEAR_FORCE, -FLIP_LINEAR_FORCE, 0), FVector(FLIP_LINEAR_FORCE, FLIP_LINEAR_FORCE, 0))), NAME_None, true);
+				p->AddAngularImpulse(FMath::RandPointInBox(FBox(FVector(-FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE, -FLIP_ANGULAR_FORCE), FVector(FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE, FLIP_ANGULAR_FORCE))), NAME_None, true);
+			}
 		}
-	}
-	else
-	{
-		Destroy();
+		else
+		{
+			Destroy();
+		}
 	}
 }
 

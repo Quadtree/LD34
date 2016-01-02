@@ -269,6 +269,8 @@ void AGrid::ContinuityCheck()
 		}
 	}
 
+	distinctGrids.Sort([](const TArray<ABasePart*> a, const TArray<ABasePart*> b) { return a.Num() > b.Num(); });
+
 	// for any grids ABOVE 0 we need to create new grids
 	for (int32 i = 1; i < distinctGrids.Num(); ++i)
 	{
@@ -540,4 +542,5 @@ void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	DOREPLIFETIME(AGrid, Faction);
 	DOREPLIFETIME(AGrid, ForwardBackwardThrust);
 	DOREPLIFETIME(AGrid, LeftRightThrust);
+	DOREPLIFETIME(AGrid, IsFiringGroup0);
 }
