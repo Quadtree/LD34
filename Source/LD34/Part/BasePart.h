@@ -42,7 +42,7 @@ public:
 
 	float GridLockTime;
 
-	UFUNCTION(NetMulticast, Unreliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void DetachFromGrid();
 
 	UPROPERTY(EditAnywhere, Category = PartType)
@@ -63,7 +63,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Shield)
 	float ShieldRegenMod;
 
-	UFUNCTION(NetMulticast, Unreliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void GoFlipping();
 
 	UFUNCTION()

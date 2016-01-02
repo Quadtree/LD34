@@ -59,7 +59,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = Destination)
 	FVector2D Destination;
 
-	UFUNCTION(BlueprintCallable, Category = Destination, Server, WithValidation, Unreliable)
+	UFUNCTION(BlueprintCallable, Category = Destination)
 	void SetDestination(FVector2D newDest);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Faction, Replicated)
@@ -136,4 +136,7 @@ public:
 
 private:
 	TMap<int32, TMap<int32, class ABasePart*>> Cells;
+
+	UFUNCTION(Server, WithValidation, Unreliable)
+	void ServerSetDestination(FVector2D newDest);
 };

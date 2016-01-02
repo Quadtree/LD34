@@ -523,12 +523,18 @@ float AGrid::GetShieldPct()
 		return 0;
 }
 
-bool AGrid::SetDestination_Validate(FVector2D destination)
+void AGrid::SetDestination(FVector2D destination)
+{
+	this->Destination = destination;
+	this->ServerSetDestination(destination);
+}
+
+bool AGrid::ServerSetDestination_Validate(FVector2D destination)
 {
 	return true;
 }
 
-void AGrid::SetDestination_Implementation(FVector2D destination)
+void AGrid::ServerSetDestination_Implementation(FVector2D destination)
 {
 	this->Destination = destination;
 }

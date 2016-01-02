@@ -15,8 +15,8 @@ ABasePart::ABasePart()
 	OddsOfSurvival = .4f;
 	bReplicates = true;
 	bReplicateMovement = true;
-	NetPriority = 1;
-	NetUpdateFrequency = 1500;
+	NetPriority = 0.3f;
+	NetUpdateFrequency = 3000;
 }
 
 // Called when the game starts or when spawned
