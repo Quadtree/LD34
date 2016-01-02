@@ -39,10 +39,15 @@ public:
 
 	float LeftRightTurn;
 
+	UFUNCTION(Server, WithValidation, Reliable)
 	void SetForwardBackwardThrust(float val);
+
+	UFUNCTION(Server, WithValidation, Reliable)
 	void SetLeftRightThrust(float val);
+
 	void SetLeftRightTurn(float val);
 
+	UFUNCTION(Server, WithValidation, Reliable)
 	void SetIsFiringGroup0(float val);
 
 	void ZoomIn();
@@ -51,8 +56,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = Destination)
 	bool DestinationMode;
 
-	UPROPERTY(BlueprintReadWrite, Category = Destination)
+	UPROPERTY(BlueprintReadOnly, Category = Destination)
 	FVector2D Destination;
+
+	UFUNCTION(BlueprintCallable, Category = Destination, Server, WithValidation, Unreliable)
+	void SetDestination(FVector2D newDest);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Faction, Replicated)
 	int32 Faction;

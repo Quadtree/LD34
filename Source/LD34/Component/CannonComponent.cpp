@@ -71,37 +71,40 @@ void UCannonComponent::TickComponent( float DeltaTime, ELevelTick TickType, FAct
 
 		p.Instigator = GridParent;
 
-		auto a = GetOwner()->GetWorld()->SpawnActor<AProjectile>(ShotType, GetComponentLocation(), GetComponentRotation(), p);
-
-		if (a)
+		if (GetOwner()->Role == ROLE_Authority)
 		{
-			a->Vel = GetComponentRotation().RotateVector(FVector(ProjectileSpeed, 0, 0));
+			auto a = GetOwner()->GetWorld()->SpawnActor<AProjectile>(ShotType, GetComponentLocation(), GetComponentRotation(), p);
 
-			if (auto pb = Cast<UPrimitiveComponent>(GridParent->GetRootComponent())) a->Vel += pb->GetPhysicsLinearVelocityAtPoint(GetComponentLocation());
-
-			/*auto root = Cast<UPrimitiveComponent>(a->GetRootComponent());
-
-			if (root)
+			if (a)
 			{
-				FVector nv = GetComponentRotation().RotateVector(FVector(ProjectileSpeed, 0, 0));
+				a->Vel = GetComponentRotation().RotateVector(FVector(ProjectileSpeed, 0, 0));
 
-				UE_LOG(LogTemp, Display, TEXT("VEL %s"), *nv.ToString());
+				if (auto pb = Cast<UPrimitiveComponent>(GridParent->GetRootComponent())) a->Vel += pb->GetPhysicsLinearVelocityAtPoint(GetComponentLocation());
 
-				root->SetPhysicsLinearVelocity(nv);
-			}*/
+				/*auto root = Cast<UPrimitiveComponent>(a->GetRootComponent());
 
-			CooldownLeft = ShotCooldown;
+				if (root)
+				{
+					FVector nv = GetComponentRotation().RotateVector(FVector(ProjectileSpeed, 0, 0));
 
-			//UE_LOG(LogTemp, Display, TEXT("Spawned!"));
+					UE_LOG(LogTemp, Display, TEXT("VEL %s"), *nv.ToString());
 
-			GridParent->Power -= EnergyToFire;
+					root->SetPhysicsLinearVelocity(nv);
+				}*/
 
-			if (FireSound) UGameplayStatics::PlaySoundAtLocation(GetOwner(), FireSound, GetComponentLocation());
+				//UE_LOG(LogTemp, Display, TEXT("Spawned!"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Shot spawn failed!"));
+			}
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Shot spawn failed!"));
-		}
+
+		CooldownLeft = ShotCooldown;
+
+		GridParent->Power -= EnergyToFire;
+
+		if (FireSound) UGameplayStatics::PlaySoundAtLocation(GetOwner(), FireSound, GetComponentLocation());
 	}
 }
 

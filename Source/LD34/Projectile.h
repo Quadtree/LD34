@@ -20,6 +20,7 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	UPROPERTY(Replicated)
 	FVector Vel;
 
 	UPROPERTY(EditAnywhere, Category = Projectile)

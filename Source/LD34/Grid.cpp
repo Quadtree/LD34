@@ -22,7 +22,7 @@ void AGrid::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Grid BeginPlay %s"), *FString::FromInt(Role));
+	//UE_LOG(LogTemp, Warning, TEXT("Grid BeginPlay %s"), *FString::FromInt(Role));
 	
 	auto a = Cast<UPrimitiveComponent>(GetRootComponent());
 
@@ -144,12 +144,22 @@ void AGrid::ZoomOut()
 	CameraDesiredHeight = FMath::Clamp(CameraDesiredHeight + CameraMovespeed, MinCameraHeight, MaxCameraHeight);
 }
 
-void AGrid::SetForwardBackwardThrust(float val)
+bool AGrid::SetForwardBackwardThrust_Validate(float val)
+{
+	return FMath::Abs(val) < 1.01f;
+}
+
+void AGrid::SetForwardBackwardThrust_Implementation(float val)
 {
 	this->ForwardBackwardThrust = val;
 }
 
-void AGrid::SetLeftRightThrust(float val)
+bool AGrid::SetLeftRightThrust_Validate(float val)
+{
+	return FMath::Abs(val) < 1.01f;
+}
+
+void AGrid::SetLeftRightThrust_Implementation(float val)
 {
 	this->LeftRightThrust = val;
 }
@@ -159,7 +169,12 @@ void AGrid::SetLeftRightTurn(float val)
 	this->LeftRightTurn = val;
 }
 
-void AGrid::SetIsFiringGroup0(float val)
+bool AGrid::SetIsFiringGroup0_Validate(float val)
+{
+	return true;
+}
+
+void AGrid::SetIsFiringGroup0_Implementation(float val)
 {
 	this->IsFiringGroup0 = val > 0.5f;
 }
@@ -359,7 +374,7 @@ void AGrid::AddToGrid_Implementation(class ABasePart* Part, int32 X, int32 Y)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s Part passed in was null"), *FString::FromInt(this->Role));
+		//UE_LOG(LogTemp, Warning, TEXT("%s Part passed in was null"), *FString::FromInt(this->Role));
 	}
 }
 
@@ -504,6 +519,16 @@ float AGrid::GetShieldPct()
 		return Shield / (3.14159f * FMath::Square(BoundingSphereRadius)) * 500;
 	else
 		return 0;
+}
+
+bool AGrid::SetDestination_Validate(FVector2D destination)
+{
+	return true;
+}
+
+void AGrid::SetDestination_Implementation(FVector2D destination)
+{
+	this->Destination = destination;
 }
 
 void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

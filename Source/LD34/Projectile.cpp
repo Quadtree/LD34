@@ -3,6 +3,7 @@
 #include "LD34.h"
 #include "Projectile.h"
 #include "Grid.h"
+#include "UnrealNetwork.h"
 
 
 // Sets default values
@@ -11,6 +12,8 @@ AProjectile::AProjectile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bReplicates = true;
+	bReplicateMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -28,38 +31,47 @@ void AProjectile::Tick( float DeltaTime )
 
 	SetActorLocation(GetActorLocation() + Vel * DeltaTime);
 
-	//UE_LOG(LogTemp, Display, TEXT("POS %s"), *GetActorLocation().ToString());
-
-	TArray<FOverlapResult> res;
-
-	if (GetWorld()->OverlapMultiByObjectType(res, FVector(GetActorLocation().X, GetActorLocation().Y, 0), FQuat::Identity, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeSphere(40)))
+	if (Role == ROLE_Authority)
 	{
-		for (auto& rd : res)
+		//UE_LOG(LogTemp, Display, TEXT("POS %s"), *GetActorLocation().ToString());
+
+		TArray<FOverlapResult> res;
+
+		if (GetWorld()->OverlapMultiByObjectType(res, FVector(GetActorLocation().X, GetActorLocation().Y, 0), FQuat::Identity, FCollisionObjectQueryParams::AllObjects, FCollisionShape::MakeSphere(40)))
 		{
-			//DrawDebugSphere(GetWorld(), GetActorLocation(), 50, 2, FColor::Green, false, 0.1f);
-
-			if (rd.Actor.Get() && rd.Actor != this->GetInstigator() && rd.Actor->GetRootComponent() && rd.Actor->GetRootComponent()->GetAttachmentRootActor() != this->GetInstigator() && Cast<AGrid>(rd.Actor->GetRootComponent()->GetAttachmentRootActor()) && rd.Component.Get() && rd.Component->GetOwner())
+			for (auto& rd : res)
 			{
-				for (float dist = 0; dist < 120; dist += 5)
+				//DrawDebugSphere(GetWorld(), GetActorLocation(), 50, 2, FColor::Green, false, 0.1f);
+
+				if (rd.Actor.Get() && rd.Actor != this->GetInstigator() && rd.Actor->GetRootComponent() && rd.Actor->GetRootComponent()->GetAttachmentRootActor() != this->GetInstigator() && Cast<AGrid>(rd.Actor->GetRootComponent()->GetAttachmentRootActor()) && rd.Component.Get() && rd.Component->GetOwner())
 				{
-					FPointDamageEvent pt;
-					pt.Damage = DamageOnHit;
-					pt.HitInfo.ImpactPoint = GetActorLocation() + FMath::RandPointInBox(FBox(FVector(-dist, -dist, 0), FVector(dist, dist, 0)));
-
-					//UE_LOG(LogTemp, Display, TEXT("Hit %s damage to %s %s"), *rd.Component->GetName(), *rd.Component->GetOwner()->GetName(), *FString::FromInt(pt.ClassID));
-
-					float dmg = rd.Component->GetOwner()->TakeDamage(DamageOnHit, pt, this->GetInstigatorController(), this);
-
-					if (dmg > 0.1f)
+					for (float dist = 0; dist < 120; dist += 5)
 					{
-						this->Destroy();
-						return;
+						FPointDamageEvent pt;
+						pt.Damage = DamageOnHit;
+						pt.HitInfo.ImpactPoint = GetActorLocation() + FMath::RandPointInBox(FBox(FVector(-dist, -dist, 0), FVector(dist, dist, 0)));
+
+						//UE_LOG(LogTemp, Display, TEXT("Hit %s damage to %s %s"), *rd.Component->GetName(), *rd.Component->GetOwner()->GetName(), *FString::FromInt(pt.ClassID));
+
+						float dmg = rd.Component->GetOwner()->TakeDamage(DamageOnHit, pt, this->GetInstigatorController(), this);
+
+						if (dmg > 0.1f)
+						{
+							this->Destroy();
+							return;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	if ((Lifespan -= DeltaTime) <= 0) Destroy();
+		if ((Lifespan -= DeltaTime) <= 0) Destroy();
+	}
 }
 
+void AProjectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AProjectile, Vel);
+}

@@ -103,7 +103,7 @@ float ABasePart::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 	return ret;
 }
 
-void ABasePart::DetachFromGrid()
+void ABasePart::DetachFromGrid_Implementation()
 {
 	AGrid* parentGrid = Cast<AGrid>(GetRootComponent()->GetAttachmentRootActor());
 
@@ -115,7 +115,7 @@ void ABasePart::DetachFromGrid()
 	ExpectedParentGrid = nullptr;
 }
 
-void ABasePart::GoFlipping()
+void ABasePart::GoFlipping_Implementation()
 {
 	if (ExplosionSound) UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
 
