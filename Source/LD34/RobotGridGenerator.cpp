@@ -21,7 +21,7 @@ ARobotGridGenerator::ARobotGridGenerator()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	FutureController = nullptr;
 }
 
 // Called when the game starts or when spawned
@@ -296,7 +296,10 @@ void ARobotGridGenerator::CreateFinalGrid(bool symmetry)
 		}
 
 		g->Faction = Faction;
-		g->SpawnDefaultController();
+		if (!FutureController)
+			g->SpawnDefaultController();
+		else
+			FutureController->Possess(g);
 
 		Destroy();
 

@@ -15,6 +15,7 @@ AGrid::AGrid()
 	DestinationMode = true;
 	bReplicates = true;
 	bReplicateMovement = true;
+	NetCullDistanceSquared = FMath::Square(100000.f);
 }
 
 // Called when the game starts or when spawned

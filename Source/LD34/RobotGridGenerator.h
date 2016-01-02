@@ -48,6 +48,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = Generation)
 	int32 Faction;
 
+	class AController* FutureController;
+
 private:
 	int32 commandCenters = 0;
 	int32 engines = 0;

@@ -17,6 +17,7 @@ ABasePart::ABasePart()
 	bReplicateMovement = true;
 	NetPriority = 0.3f;
 	NetUpdateFrequency = 3000;
+	NetCullDistanceSquared = FMath::Square(50000.f);
 }
 
 // Called when the game starts or when spawned
