@@ -137,9 +137,10 @@ void AGrid::ZoomOut()
 
 void AGrid::SetForwardBackwardThrust(float val)
 {
+	auto old = this->ForwardBackwardThrust;
 	this->ForwardBackwardThrust = val;
 
-	if (Role != ROLE_Authority) ServerSetForwardBackwardThrust(val);
+	if (Role != ROLE_Authority && old != this->ForwardBackwardThrust) ServerSetForwardBackwardThrust(val);
 }
 
 bool AGrid::ServerSetForwardBackwardThrust_Validate(float val)
@@ -159,9 +160,10 @@ bool AGrid::ServerSetLeftRightThrust_Validate(float val)
 
 void AGrid::SetLeftRightThrust(float val)
 {
+	auto old = this->LeftRightThrust;
 	this->LeftRightThrust = val;
 
-	if (Role != ROLE_Authority) ServerSetLeftRightThrust(val);
+	if (Role != ROLE_Authority && old != this->LeftRightThrust) ServerSetLeftRightThrust(val);
 }
 
 void AGrid::ServerSetLeftRightThrust_Implementation(float val)
@@ -176,9 +178,11 @@ void AGrid::SetLeftRightTurn(float val)
 
 void AGrid::SetIsFiringGroup0(float val)
 {
+	auto old = this->IsFiringGroup0;
+
 	this->IsFiringGroup0 = val > 0.5f;
 
-	if (Role != ROLE_Authority) ServerSetIsFiringGroup0(val);
+	if (Role != ROLE_Authority && old != this->IsFiringGroup0) ServerSetIsFiringGroup0(val);
 }
 
 bool AGrid::ServerSetIsFiringGroup0_Validate(float val)
@@ -537,8 +541,10 @@ float AGrid::GetShieldPct()
 
 void AGrid::SetDestination(FVector2D destination)
 {
+	auto old = this->Destination;
 	this->Destination = destination;
-	this->ServerSetDestination(destination);
+
+	if (old != destination) this->ServerSetDestination(destination);
 }
 
 bool AGrid::ServerSetDestination_Validate(FVector2D destination)
